@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { invoke } from "@tauri-apps/api/core";
+// import { invoke } from "@tauri-apps/api/core";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
 const LoginForm = () => {
@@ -20,19 +20,37 @@ const LoginForm = () => {
         password: accountPassword,
       });
       console.log(response.data);
-
+  
       // Optionally, use Tauri's invoke function
-      await invoke("some_backend_function", { data: response.data });
-
+      // await invoke("some_backend_function", { data: response.data });
+  
       // Set success message and show modal
       setModalMessage("Login successful!");
       setModalVisible(true);
-
+  
       // Navigate to another page on successful login
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Error logging in:", error);
-      setModalMessage(error.message || "An error occurred");
+      let errorMessage = "An error occurred. Please try again later.";
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 500) {
+          errorMessage = "Internal server error. Please try again later.";
+        } else if (error.response.status === 401) {
+          errorMessage = "Invalid email or password.";
+        } else {
+          errorMessage = error.response.data.message || errorMessage;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "No response from server. Please check your network connection.";
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        errorMessage = error.message;
+      }
+      setModalMessage(errorMessage);
       setModalVisible(true);
     }
   };

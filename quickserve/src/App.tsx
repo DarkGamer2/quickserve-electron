@@ -1,10 +1,12 @@
 import "./App.css";
+import Dashboard from "./pages/Dasboard";
 import Login from "./pages/Login";
 
 function App() {
   return (
     <main className="container">
-      <Login />
+      <Dashboard/>
+      {/* <Login /> */}
     </main>
   );
 }

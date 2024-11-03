@@ -1,29 +1,39 @@
-import React from 'react';
-
+import React from "react";
+import HomeIcon from "@mui/icons-material/Home";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import SettingsIcon from "@mui/icons-material/Settings";
+import { NavLink } from "react-router-dom";
 const SideNav: React.FC = () => {
-    return (
-        <div className="h-screen bg-gray-800 text-white flex flex-col">
-            <div className="flex items-center justify-center h-20 border-b border-gray-700">
-                <h1 className="text-2xl font-bold">QuickServe</h1>
-            </div>
-            <nav className="flex-1 p-4">
-                <ul className="space-y-4">
-                    <li className="hover:bg-gray-700 p-2 rounded">
-                        <a href="#home" className="block">Home</a>
-                    </li>
-                    <li className="hover:bg-gray-700 p-2 rounded">
-                        <a href="#services" className="block">Services</a>
-                    </li>
-                    <li className="hover:bg-gray-700 p-2 rounded">
-                        <a href="#about" className="block">About</a>
-                    </li>
-                    <li className="hover:bg-gray-700 p-2 rounded">
-                        <a href="#contact" className="block">Contact</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    );
+  return (
+    <div>
+      <div>
+        <nav className=" h-screen w-20 list-none">
+          <NavLink to="/">
+            <li className="text-green-500 py-6">
+              <HomeIcon fontSize="large" />
+            </li>
+          </NavLink>
+          <NavLink to="/reports">
+            {" "}
+            <li className="text-purple-600 py-6">
+              <AssessmentIcon fontSize="large" />
+            </li>
+          </NavLink>
+          <NavLink to="/addjob">
+            <li className="text-red-500 py-6">
+              <AssignmentIcon fontSize="large" />
+            </li>
+          </NavLink>
+          <NavLink to="/settings">
+            <li className="text-orange-800 py-6">
+              <SettingsIcon fontSize="large" />
+            </li>
+          </NavLink>
+        </nav>
+      </div>
+    </div>
+  );
 };
 
 export default SideNav;
