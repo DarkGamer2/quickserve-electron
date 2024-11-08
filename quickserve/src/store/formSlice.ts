@@ -1,62 +1,56 @@
 // FILE: src/store/formSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
-interface ProductInformation {
-  productManufacturer: string;
-  productModelNumber: string;
-  productSerialNumber: string;
-}
+import PCRepairImage from '../assets/images/pcrepairs.jpg'; // Ensure this path is correct
+import Coding from '../assets/images/coding.jpg';
+import Networking from '../assets/images/networking.jpg';
 
 interface FormState {
   jobRequester: string;
-  roomNumber: string;
-  phoneNumber: string;
-  unit: string;
-  requesterEmail: string;
-  jobLocation: string;
-  productInformation: ProductInformation;
   jobDescription: string;
   jobRequestDate: string;
-  loading: boolean;
-  error: string | null;
-  success: boolean;
-  assignedBy?: string;
-  jobType?: string;
+  assignedBy: string;
+  jobLocation: string;
+  jobType: string;
+  jobStatus: string;
+  jobIcon: string;
+  roomNumber?: string;
+  phoneNumber?: string;
+  unit?: string;
+  requesterEmail?: string;
+  productInformation: {
+    productManufacturer?: string;
+    productModelNumber?: string;
+    productSerialNumber?: string;
+  };
 }
 
 const initialState: FormState = {
   jobRequester: '',
-  roomNumber: '',
-  phoneNumber: '',
-  unit: '',
-  requesterEmail: '',
+  jobDescription: '',
+  jobRequestDate: '',
+  assignedBy: '',
   jobLocation: '',
+  jobType: '',
+  jobStatus: 'Pending',
+  jobIcon: '',
   productInformation: {
     productManufacturer: '',
     productModelNumber: '',
     productSerialNumber: '',
   },
-  jobDescription: '',
-  jobRequestDate: '',
-  loading: false,
-  error: null,
-  success: false,
-  assignedBy: '',
-  jobType: '',
 };
 
-export const addJob = createAsyncThunk(
-  'form/addJob',
-  async (formData: FormState, { rejectWithValue }) => {
-    try {
-      const response = await axios.post('/api/jobs/createjob', formData);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+export const jobTypeIcons: { [key: string]: string } = {
+  'PC Repairs': PCRepairImage,
+  'Web Development': Coding,
+  'Networking': Networking,
+};
+
+export const addJob = createAsyncThunk('form/addJob', async (formData: FormState) => {
+  const response = await axios.post('http://localhost:3000/api/jobs/addjob', formData);
+  return response.data;
+});
 
 const formSlice = createSlice({
   name: 'form',
@@ -67,29 +61,15 @@ const formSlice = createSlice({
       if (field in state) {
         (state as any)[field] = value;
       } else if (field in state.productInformation) {
-        state.productInformation[field as keyof ProductInformation] = value;
+        state.productInformation[field as keyof typeof state.productInformation] = value;
       }
     },
-    resetForm: (state) => {
-      Object.assign(state, initialState);
-    },
+    resetForm: () => initialState,
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(addJob.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.success = false;
-      })
-      .addCase(addJob.fulfilled, (state) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(addJob.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-        state.success = false;
-      });
+    builder.addCase(addJob.fulfilled, () => {
+      // Handle successful job creation
+    });
   },
 });
 

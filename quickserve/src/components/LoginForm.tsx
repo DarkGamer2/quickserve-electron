@@ -103,7 +103,7 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
-      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} />
+      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} color="defaultColor" />
     </div>
   );
 };

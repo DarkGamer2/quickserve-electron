@@ -10,43 +10,47 @@ import AddJob from "./pages/AddJob";
 import { Provider } from "react-redux";
 import store from "./store/index";
 import Profile from "./pages/Profile";
-const router=createBrowserRouter([
+import { ThemeProvider } from "./context/theme/Theme";
+import GenerateReport from "./pages/GenerateReport";
+const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
   },
   {
-    path:"/register",
-    element:<Register/>
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "/dashboard",
-    element:<Dashboard/>
-  },{
-    path:"/:id",
-    element:<Details/>
+    element: <Dashboard />,
   },
   {
-    path:"/reports",
-    element:<Reports/>
+    path: "/:id",
+    element: <Details />,
   },
   {
-    path:"/settings",
-    element:<Settings/>
+    path: "/reports",
+    element: <Reports />,
   },
   {
-    path:"/addjob",
-    element:<AddJob/>
+    path: "/settings",
+    element: <Settings />,
   },
   {
-    path:"/profile",
-    element:<Profile/>
-  }
-]
-  
-)
+    path: "/addjob",
+    element: <AddJob />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  { path: "/generateReport", element: <GenerateReport /> },
+]);
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
- <Provider store={store}>
-   <RouterProvider router={router}/>
- </Provider>
+  <ThemeProvider>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </ThemeProvider>
 );

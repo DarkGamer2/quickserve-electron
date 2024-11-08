@@ -1,28 +1,37 @@
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../store"; // Import AppDispatch here
-import { updateField, addJob, resetForm } from "../store/formSlice";
-import Modal from "./Modal";
-import { useState } from "react";
+// FILE: src/components/AddJobForm.tsx
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store';
+import { updateField, addJob, resetForm, jobTypeIcons } from '../store/formSlice';
+import Modal from './Modal';
+import { useState } from 'react';
+import { useTheme } from '../context/theme/Theme';
 
 const AddJobForm = () => {
-  const dispatch = useDispatch<AppDispatch>(); // Apply AppDispatch type here
+  const dispatch = useDispatch<AppDispatch>();
   const formState = useSelector((state: RootState) => state.form);
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalColor, setModalColor] = useState('');
   const [showOptionalFields, setShowOptionalFields] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { theme } = useTheme();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     dispatch(updateField({ field: name, value }));
   };
 
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(addJob(formState)).then((result: any) => {
-      if (result.meta.requestStatus === "fulfilled") {
-        setModalMessage("Job created successfully!");
+    const jobIcon = jobTypeIcons[formState.jobType] || '';
+    const formData = { ...formState, jobIcon };
+    dispatch(addJob(formData)).then((result: any) => {
+      if (result.meta.requestStatus === 'fulfilled') {
+        setModalMessage('Job created successfully!');
+        setModalColor('bg-green-500');
       } else {
-        setModalMessage("Error creating job.");
+        setModalMessage('Error creating job.');
+        setModalColor('bg-red-500');
       }
       setShowModal(true);
       dispatch(resetForm());
@@ -38,134 +47,148 @@ const AddJobForm = () => {
   };
 
   return (
-    <div>
-      <form>
+    <div className={`flex items-center justify-center min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>
+      <form className="w-full max-w-lg p-8">
         <div>
-          <label className="block text-center">Job Requester</label>
+          <label className="block text-center dark:text-white">Job Requester</label>
           <input
             name="jobRequester"
             value={formState.jobRequester}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           />
         </div>
         <div>
-          <label className="block text-center">Job Description</label>
+          <label className="block text-center dark:text-white">Job Description</label>
           <input
             name="jobDescription"
             value={formState.jobDescription}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           />
         </div>
         <div>
-          <label className="block text-center">Job Request Date</label>
+          <label className="block text-center dark:text-white">Job Request Date</label>
           <input
             name="jobRequestDate"
             value={formState.jobRequestDate}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
             type="date"
           />
         </div>
         <div>
-          <label className="block text-center">Assigned By</label>
+          <label className="block text-center dark:text-white">Assigned By</label>
           <input
             name="assignedBy"
             value={formState.assignedBy}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           />
         </div>
         <div>
-          <label className="block text-center">Job Location</label>
+          <label className="block text-center dark:text-white">Job Location</label>
           <input
             name="jobLocation"
             value={formState.jobLocation}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           />
         </div>
         <div>
-          <label className="block text-center">Job Type</label>
+          <label className="block text-center dark:text-white">Job Type</label>
           <input
             name="jobType"
             value={formState.jobType}
             onChange={handleChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           />
+        </div>
+        <div>
+          <label className="block text-center dark:text-white">Job Status</label>
+          <select
+            name="jobStatus"
+            value={formState.jobStatus}
+            onChange={handleChange}
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Complete">Complete</option>
+            <option value="On Hold">On Hold</option>
+            <option value="In Progress">In Progress</option>
+          </select>
         </div>
         <button
           type="button"
           onClick={toggleOptionalFields}
-          className="bg-blue-500 text-white rounded-md px-3 py-2 font-inter mt-4"
+          className="bg-blue-500 text-white rounded-md px-3 py-2 font-inter mt-4 w-full dark:text-white"
         >
-          {showOptionalFields ? "Hide Optional Fields" : "Show Optional Fields"}
+          {showOptionalFields ? 'Hide Optional Fields' : 'Show Optional Fields'}
         </button>
 
         {showOptionalFields && (
           <>
             <div>
-              <label className="block">Room Number</label>
+              <label className="block dark:text-white">Room Number</label>
               <input
                 name="roomNumber"
                 value={formState.roomNumber}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Phone Number</label>
+              <label className="block dark:text-white">Phone Number</label>
               <input
                 name="phoneNumber"
                 value={formState.phoneNumber}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Unit</label>
+              <label className="block dark:text-white">Unit</label>
               <input
                 name="unit"
                 value={formState.unit}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Requester Email</label>
+              <label className="block dark:text-white">Requester Email</label>
               <input
                 name="requesterEmail"
                 value={formState.requesterEmail}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Product Manufacturer</label>
+              <label className="block dark:text-white">Product Manufacturer</label>
               <input
                 name="productManufacturer"
                 value={formState.productInformation.productManufacturer}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Product Model Number</label>
+              <label className="block dark:text-white">Product Model Number</label>
               <input
                 name="productModelNumber"
                 value={formState.productInformation.productModelNumber}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
             <div>
-              <label className="block">Product Serial Number</label>
+              <label className="block dark:text-white">Product Serial Number</label>
               <input
                 name="productSerialNumber"
                 value={formState.productInformation.productSerialNumber}
                 onChange={handleChange}
-                className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
               />
             </div>
           </>
@@ -174,7 +197,7 @@ const AddJobForm = () => {
         <div className="text-center">
           <button
             onClick={handleSubmit}
-            className="bg-orange-500 text-white rounded-md px-3 py-2 font-inter mt-4"
+            className="bg-orange-500 text-white rounded-md px-3 py-2 font-inter mt-4 w-full dark:text-white"
           >
             Add Job
           </button>
@@ -182,6 +205,7 @@ const AddJobForm = () => {
       </form>
       {showModal && (
         <Modal
+          color={modalColor}
           message={modalMessage}
           onClose={handleCloseModal}
           show={showModal}
