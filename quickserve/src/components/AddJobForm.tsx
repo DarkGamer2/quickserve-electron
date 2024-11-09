@@ -211,6 +211,11 @@ const AddJobForm = () => {
           show={showModal}
         />
       )}
+      {formState.successMessage && (
+        <div className="text-center mt-4">
+          <p className="text-green-500">{formState.successMessage}</p>
+        </div>
+      )}
     </div>
   );
 };

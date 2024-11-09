@@ -4,6 +4,7 @@ const app = express();
 import authRoutes from './src/routes/authenticationRoutes';
 import '../server/src/auth/passportConfig';
 import jobRoutes from './src/routes/jobRoutes';
+import userRoutes from "./src/routes/userRoutes";
 import passport from 'passport';
 import session from 'express-session';
 app.use(session({
@@ -19,6 +20,7 @@ app.use(cors());
 
 app.use("/api/auth",authRoutes);
 app.use('/api/jobs',jobRoutes);
+app.use('/api/users',userRoutes)
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });

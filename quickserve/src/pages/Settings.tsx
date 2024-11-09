@@ -3,10 +3,15 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
-
+import { useFontSize } from "../context/font/Font";
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
-
+const {fontSize,setFontSize}=useFontSize();
+  const handleFontSizeChange=(e:React.ChangeEvent<HTMLSelectElement>)=>{
+    const newSize = e.target.value + 'px';
+    setFontSize(newSize);
+    document.documentElement.style.setProperty('--font-size', newSize);
+  };
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       <SideNav />
@@ -24,9 +29,11 @@ const Settings = () => {
         </div>
         <div className="flex items-center mb-4">
           <p className="mx-1 dark:text-white">Font Size</p>
-          <select className="rounded-md bg-slate-300 font-outfit py-2 my-1">
+          <select value={parseInt(fontSize)} onChange={handleFontSizeChange} className="rounded-md bg-slate-300 font-outfit py-2 my-1">
             <option>10</option>
             <option>12</option>
+            <option>14</option>
+            <option>16</option>
             <option>20</option>
           </select>
         </div>

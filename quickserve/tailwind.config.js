@@ -12,6 +12,9 @@ export default {
         'bebasneue': ['Bebas Neue', 'sans-serif'],
         'outfit': ['Outfit', 'sans-serif'],
       },
+      fontSize: {
+        'custom': 'var(--font-size)',
+      },
       colors: {
         completed: "#14AE5C",
         inProgress: "#00AEFF",

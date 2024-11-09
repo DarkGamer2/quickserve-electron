@@ -1,7 +1,7 @@
 // FILE: src/store/formSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import PCRepairImage from '../assets/images/pcrepairs.jpg'; // Ensure this path is correct
+import PCRepairImage from '../assets/images/pcrepairs.jpg';
 import Coding from '../assets/images/coding.jpg';
 import Networking from '../assets/images/networking.jpg';
 
@@ -23,6 +23,7 @@ interface FormState {
     productModelNumber?: string;
     productSerialNumber?: string;
   };
+  successMessage?: string;
 }
 
 const initialState: FormState = {
@@ -39,6 +40,7 @@ const initialState: FormState = {
     productModelNumber: '',
     productSerialNumber: '',
   },
+  successMessage: '',
 };
 
 export const jobTypeIcons: { [key: string]: string } = {
@@ -67,8 +69,10 @@ const formSlice = createSlice({
     resetForm: () => initialState,
   },
   extraReducers: (builder) => {
-    builder.addCase(addJob.fulfilled, () => {
+    builder.addCase(addJob.fulfilled, (state, action) => {
       // Handle successful job creation
+      state.successMessage = 'Job created successfully!';
+      console.log(action.payload);
     });
   },
 });

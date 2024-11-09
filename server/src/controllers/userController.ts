@@ -55,6 +55,20 @@ class userController {
             res.status(400).json({ message: err.message });
         }
     }
+
+    public async getUser(req: Request, res: Response): Promise<void> {
+        try {
+          const userId = req.params.id;
+          const user = await User.findById(userId);
+          if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+          }
+          res.json(user);
+        } catch (error) {
+          res.status(500).json({ message: 'Error fetching user', error });
+        }
+      }
 }
 
 export default new userController();
