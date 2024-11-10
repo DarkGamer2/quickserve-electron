@@ -1,9 +1,9 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import { invoke } from "@tauri-apps/api/core";
+import {AuthContext} from "../context/auth/Auth";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
+
 const LoginForm = () => {
   const navigate = useNavigate();
 
@@ -12,22 +12,19 @@ const LoginForm = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
 
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
+  const { login } = authContext;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
-        email: accountEmail,
-        password: accountPassword,
-      });
-      console.log(response.data);
-  
-      // Optionally, use Tauri's invoke function
-      // await invoke("some_backend_function", { data: response.data });
-  
-      // Set success message and show modal
+      await login(accountEmail, accountPassword);
       setModalMessage("Login successful!");
       setModalVisible(true);
-  
+
       // Navigate to another page on successful login
       navigate("/dashboard");
     } catch (error: any) {
@@ -65,7 +62,7 @@ const LoginForm = () => {
       <div id="login-form" className="flex justify-center">
         <form onSubmit={handleSubmit}>
           <div>
-            <label className="block text-center">Email</label>
+            <label className="block text-center dark:text-white">Email</label>
             <input
               className="rounded-md bg-slate-300 font-outfit py-2 my-1"
               type="text"
@@ -74,7 +71,7 @@ const LoginForm = () => {
             />
           </div>
           <div>
-            <label className="block text-center" text-center>Password</label>
+            <label className="block text-center dark:text-white">Password</label>
             <input
               className="rounded-md bg-slate-300 font-outfit py-2 my-1"
               type="password"
@@ -92,7 +89,6 @@ const LoginForm = () => {
           </div>
           <div className="text-center">
             <Link to="/register">
-              {" "}
               <button
                 type="button"
                 className="rounded-md bg-green-400 text-white uppercase py-3 px-2 my-2"
@@ -103,7 +99,7 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
-      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} color="defaultColor" />
+      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} color="defaultColor" type="message"/>
     </div>
   );
 };

@@ -50,6 +50,15 @@ const AddJobForm = () => {
     <div className={`flex items-center justify-center min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>
       <form className="w-full max-w-lg p-8">
         <div>
+          <label className="block text-center dark:text-white">Job Name</label>
+          <input
+            name="jobName"
+            value={formState.jobName}
+            onChange={handleChange}
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
+          />
+        </div>
+        <div>
           <label className="block text-center dark:text-white">Job Requester</label>
           <input
             name="jobRequester"
@@ -97,12 +106,17 @@ const AddJobForm = () => {
         </div>
         <div>
           <label className="block text-center dark:text-white">Job Type</label>
-          <input
+          <select
             name="jobType"
             value={formState.jobType}
             onChange={handleChange}
             className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
-          />
+          >
+            <option value="">Select Job Type</option>
+            <option value="PC Repairs">PC Repairs</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Networking">Networking</option>
+          </select>
         </div>
         <div>
           <label className="block text-center dark:text-white">Job Status</label>
@@ -113,7 +127,7 @@ const AddJobForm = () => {
             className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
           >
             <option value="Pending">Pending</option>
-            <option value="Complete">Complete</option>
+            <option value="Completed">Complete</option>
             <option value="On Hold">On Hold</option>
             <option value="In Progress">In Progress</option>
           </select>
@@ -204,7 +218,7 @@ const AddJobForm = () => {
         </div>
       </form>
       {showModal && (
-        <Modal
+        <Modal type='message'
           color={modalColor}
           message={modalMessage}
           onClose={handleCloseModal}

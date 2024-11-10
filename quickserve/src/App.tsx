@@ -1,5 +1,4 @@
 import "./App.css";
-import Dashboard from "./pages/Dasboard";
 import Login from "./pages/Login";
 import { useTheme } from "./context/theme/Theme";
 function App() {
@@ -8,9 +7,9 @@ function App() {
     <main className={` ${theme==="dark"?"dark":"light"}`}>
       <div className="dark:bg-black">
 
-      <Dashboard/>
+     <Login/>
       </div>
-      {/* <Login /> */}
+    
     </main>
   );
 }

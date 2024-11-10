@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { invoke } from "@tauri-apps/api/core";
+import { AuthContext } from "../context/auth/Auth";
 import Modal from "./Modal";
 
 const RegisterForm = () => {
@@ -13,21 +13,22 @@ const RegisterForm = () => {
   const [modalMessage, setModalMessage] = useState<string>("");
 
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("AuthContext is not provided");
+  }
+  const { register } = authContext;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await invoke("register", {
-        request: {
-          full_name: fullName,
-          email: email,
-          password: password,
-          confirm_password: confirmPassword,
-          skillset: skillset,
-        },
-      });
-      console.log(response);
+    if (password !== confirmPassword) {
+      setModalMessage("Passwords do not match");
+      setModalVisible(true);
+      return;
+    }
 
+    try {
+      await register(email, password, fullName, skillset);
       setModalMessage("Registration successful!");
       setModalVisible(true);
 
@@ -54,6 +55,7 @@ const RegisterForm = () => {
             <input
               className="rounded-md bg-slate-300 font-outfit w-full"
               type="text"
+              value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
@@ -63,6 +65,7 @@ const RegisterForm = () => {
             <input
               className="rounded-md bg-slate-300 font-outfit w-full"
               type="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -71,6 +74,7 @@ const RegisterForm = () => {
             <input
               className="rounded-md bg-slate-300 font-outfit w-full"
               type="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
@@ -79,6 +83,7 @@ const RegisterForm = () => {
             <input
               className="rounded-md bg-slate-300 font-outfit w-full"
               type="password"
+              value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
@@ -87,6 +92,7 @@ const RegisterForm = () => {
             <input
               className="rounded-md bg-slate-300 font-outfit w-full"
               type="text"
+              value={skillset.join(",")}
               onChange={(e) => setSkillset(e.target.value.split(","))}
             />
           </div>
@@ -104,7 +110,7 @@ const RegisterForm = () => {
           </div>
         </form>
       </div>
-      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} />
+      <Modal show={modalVisible} onClose={closeModal} message={modalMessage} color="blue" type="message" />
     </div>
   );
 };

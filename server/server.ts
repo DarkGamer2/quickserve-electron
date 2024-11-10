@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
+import { Request, Response, NextFunction } from 'express';
 const app = express();
 import authRoutes from './src/routes/authenticationRoutes';
-import '../server/src/auth/passportConfig';
 import jobRoutes from './src/routes/jobRoutes';
 import userRoutes from "./src/routes/userRoutes";
 import passport from 'passport';
+require ("./src/auth/passportConfig");
 import session from 'express-session';
 app.use(session({
     secret:"secret",
@@ -21,6 +22,11 @@ app.use(cors());
 app.use("/api/auth",authRoutes);
 app.use('/api/jobs',jobRoutes);
 app.use('/api/users',userRoutes)
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ message: err.message });
+});
+
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });

@@ -9,11 +9,11 @@ import Networking from "../assets/images/networking.jpg";
 import { useTheme } from "../context/theme/Theme";
 import axios from "axios";
 
-//TODO:make sure all required data is being fetched from the API and rendered in the app.
 const statusColors: { [key: string]: string } = {
   "In Progress": "bg-inProgress",
   "Completed": "bg-completed",
   "On Hold": "bg-onHold",
+  "Pending": "bg-pending",
 };
 
 const jobTypeImages: { [key: string]: string } = {
@@ -31,6 +31,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:3000/api/jobs/jobs");
+      console.log(response.data); // Log the response data
       const jobsWithImages = response.data.map((job: any) => ({
         ...job,
         icon: jobTypeImages[job.jobType] || "",
@@ -71,8 +72,8 @@ const Dashboard = () => {
                   jobIcon={job.icon}
                   jobTitle={job.jobName}
                   jobDescription={job.jobDescription}
-                  jobStatus={job.status}
-                  statusColor={statusColors[job.status]}
+                  jobStatus={job.jobStatus}
+                  statusColor={statusColors[job.jobStatus]}
                   jobId={job._id}
                 />
               ))}

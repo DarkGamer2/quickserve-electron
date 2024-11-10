@@ -8,10 +8,18 @@ import Coding from "../assets/images/coding.jpg";
 import Networking from "../assets/images/networking.jpg";
 import LoopIcon from '@mui/icons-material/Loop';
 import { useTheme } from "../context/theme/Theme";
+
 const jobTypeImages: { [key: string]: string } = {
   "PC Repairs": PCRepairImage,
   "Web Development": Coding,
   "Networking": Networking,
+};
+
+const statusColors: { [key: string]: string } = {
+  "In Progress": "bg-inProgress",
+  "Completed": "bg-completed",
+  "On Hold": "bg-onHold",
+  "Pending": "bg-pending",
 };
 
 const Details = () => {
@@ -19,13 +27,15 @@ const Details = () => {
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const {theme}=useTheme();
+  const { theme } = useTheme();
+
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/jobs/${id}`);
         const jobDetails = response.data;
         jobDetails.icon = jobTypeImages[jobDetails.jobType] || "";
+        jobDetails.statusColor = statusColors[jobDetails.jobStatus] || "";
         setJob(jobDetails);
         setLoading(false);
       } catch (error) {
@@ -38,28 +48,28 @@ const Details = () => {
   }, [id]);
 
   if (loading) {
-    return(
-     <div className="flex">
-      <SideNav/>
-      <div className="flex items-center justify-center text-orange-500 font-inter">
-      <LoopIcon className="animate-spin mr-2" />
-      <span>Loading...</span>
-    </div>
-     </div>
+    return (
+      <div className="flex">
+        <SideNav />
+        <div className="flex items-center justify-center text-orange-500 font-inter">
+          <LoopIcon className="animate-spin mr-2" />
+          <span>Loading...</span>
+        </div>
+      </div>
     );
   }
 
   if (!job) {
-    return(
+    return (
       <div className="flex">
-        <SideNav/>
+        <SideNav />
         <p>Job Not Found</p>
       </div>
-    )
+    );
   }
 
   return (
-    <div className={`flex flex-col md:flex-row ${theme==="dark"?"dark":"light"}`}>
+    <div className={`flex flex-col md:flex-row ${theme === "dark" ? "dark" : "light"}`}>
       <SideNav />
       <div className="flex-1 p-4 dark:bg-black">
         <h1 className="font-bebasneue text-center text-4xl dark:text-white">Job Details</h1>
@@ -95,7 +105,7 @@ const Details = () => {
                   <button
                     className={`rounded-md px-3 py-1 text-center font-inter mt-4 ${job.statusColor} text-white`} // Apply background color to button
                   >
-                    {job.status}
+                    {job.jobStatus}
                   </button>
                 </div>
               </div>

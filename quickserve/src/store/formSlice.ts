@@ -6,6 +6,7 @@ import Coding from '../assets/images/coding.jpg';
 import Networking from '../assets/images/networking.jpg';
 
 interface FormState {
+  jobName: string;
   jobRequester: string;
   jobDescription: string;
   jobRequestDate: string;
@@ -27,6 +28,7 @@ interface FormState {
 }
 
 const initialState: FormState = {
+  jobName: '',
   jobRequester: '',
   jobDescription: '',
   jobRequestDate: '',

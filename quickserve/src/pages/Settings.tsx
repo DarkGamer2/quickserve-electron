@@ -4,14 +4,46 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
+import Modal from "../components/Modal";
+import { useState } from "react";
+
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
-const {fontSize,setFontSize}=useFontSize();
-  const handleFontSizeChange=(e:React.ChangeEvent<HTMLSelectElement>)=>{
+  const { fontSize, setFontSize } = useFontSize();
+  const [showModal, setShowModal] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [modalType, setModalType] = useState<'message' | 'admin'>('message');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalColor, setModalColor] = useState('');
+
+  const handleFontSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = e.target.value + 'px';
     setFontSize(newSize);
     document.documentElement.style.setProperty('--font-size', newSize);
   };
+
+  const handleDeleteAccount = () => {
+    setModalType('admin');
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleConfirmDelete = () => {
+    // Handle the admin password verification and account deletion logic here
+    console.log("Admin Password:", adminPassword);
+    setShowModal(false);
+  };
+
+  const showMessageModal = (message: string, color: string) => {
+    setModalType('message');
+    setModalMessage(message);
+    setModalColor(color);
+    setShowModal(true);
+  };
+
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       <SideNav />
@@ -29,12 +61,16 @@ const {fontSize,setFontSize}=useFontSize();
         </div>
         <div className="flex items-center mb-4">
           <p className="mx-1 dark:text-white">Font Size</p>
-          <select value={parseInt(fontSize)} onChange={handleFontSizeChange} className="rounded-md bg-slate-300 font-outfit py-2 my-1">
-            <option>10</option>
-            <option>12</option>
-            <option>14</option>
-            <option>16</option>
-            <option>20</option>
+          <select
+            value={parseInt(fontSize)}
+            onChange={handleFontSizeChange}
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+          >
+            <option value="10">10</option>
+            <option value="12">12</option>
+            <option value="14">14</option>
+            <option value="16">16</option>
+            <option value="20">20</option>
           </select>
         </div>
         <div className="text-center mb-4">
@@ -43,9 +79,56 @@ const {fontSize,setFontSize}=useFontSize();
           </Link>
         </div>
         <div className="text-center">
-          <button className="bg-red-600 font-inter py-3 px-2 text-center text-white rounded-md">Delete Account</button>
+          <button
+            className="bg-red-600 font-inter py-3 px-2 text-center text-white rounded-md"
+            onClick={handleDeleteAccount}
+          >
+            Delete Account
+          </button>
         </div>
       </div>
+      {showModal && modalType === 'admin' && (
+        <Modal
+          color={theme === 'dark' ? 'bg-black' : 'bg-white'}
+          message={
+            <div>
+              <p className="text-black mb-4 dark:text-white">Enter admin password to delete account:</p>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
+              />
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-green-500 text-white rounded-md px-3 py-2 mr-2"
+                  onClick={handleConfirmDelete}
+                >
+                  Confirm
+                </button>
+                <button
+                  className="bg-gray-500 text-white rounded-md px-3 py-2"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+          onClose={handleCloseModal}
+          show={showModal}
+          type="admin"
+        />
+      )}
+      {showModal && modalType === 'message' && (
+        <Modal
+          color={modalColor}
+          message={modalMessage}
+          onClose={handleCloseModal}
+          show={showModal}
+          type="message"
+        />
+      )}
     </div>
   );
 };

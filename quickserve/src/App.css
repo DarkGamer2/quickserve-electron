@@ -24,3 +24,20 @@
   body {
     font-size: var(--font-size);
   }
+
+  /* FILE: src/index.css */
+.fade-out {
+  animation: fadeOut 5s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

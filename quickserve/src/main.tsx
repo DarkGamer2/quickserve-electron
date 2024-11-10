@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import { ThemeProvider } from "./context/theme/Theme";
 import GenerateReport from "./pages/GenerateReport";
 import { FontSizeProvider } from "./context/font/Font";
+import AuthProvider from "./context/auth/Auth";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -50,10 +51,13 @@ const router = createBrowserRouter([
 ]);
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <ThemeProvider>
-  <FontSizeProvider>
+    <AuthProvider>
+    <FontSizeProvider>
   <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
   </FontSizeProvider>
+    </AuthProvider>
+  
   </ThemeProvider>
 );

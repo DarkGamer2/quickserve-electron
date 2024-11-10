@@ -70,7 +70,7 @@ const handleCloseModal=()=>{
            </div>
           </form>
           {showModal &&(
-            <Modal color={modalColor} message={modalMessage} onClose={handleCloseModal} show={showModal}/>
+            <Modal color={modalColor} message={modalMessage} onClose={handleCloseModal} show={showModal} type="message"/>
           )}
         </div>
       </div>
