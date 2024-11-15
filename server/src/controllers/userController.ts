@@ -1,7 +1,7 @@
 // FILE: userController.ts
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
-import { UserInt } from '../../interface/interfaces';
+import { UserInt } from '../interface/interfaces';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 require("../auth/passportConfig")
@@ -69,6 +69,15 @@ class userController {
           res.status(500).json({ message: 'Error fetching user', error });
         }
       }
+      public async getUsers(req: Request, res: Response): Promise<void> {
+        try {
+          const users = await User.find();
+          res.json(users);
+        } catch (error) {
+          res.status(500).json({ message: 'Error fetching users', error });
+        }
+      }
 }
+
 
 export default new userController();

@@ -7,57 +7,89 @@ import Details from "./pages/Details";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import AddJob from "./pages/AddJob";
+import Profile from "./pages/Profile";
+import GenerateReport from "./pages/GenerateReport";
 import { Provider } from "react-redux";
 import store from "./store/index";
-import Profile from "./pages/Profile";
 import { ThemeProvider } from "./context/theme/Theme";
-import GenerateReport from "./pages/GenerateReport";
 import { FontSizeProvider } from "./context/font/Font";
 import AuthProvider from "./context/auth/Auth";
-const router = createBrowserRouter([
+import Report from "./components/Report";
+import Error from "./pages/Error";
+// Create the router with the future flag for v7 behavior
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/register",
+      element: <Register />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/dashboard",
+      element: <Dashboard />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/details/:id",
+      element: <Details />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/reports",
+      element: <Reports />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/settings",
+      element: <Settings />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/addjob",
+      element: <AddJob />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/profile/:userId",
+      element: <Profile />,
+      errorElement:<Error/>
+    },
+    {
+      path: "/generateReport",
+      element: <GenerateReport />,
+      errorElement:<Error/>
+    },
+    {
+      path:"/report/:reportId",
+      element:<Report reportTitle="Sample Title" reportDescription="Sample Description" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
+      errorElement:<Error/>
+    },
+  ],
   {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "/:id",
-    element: <Details />,
-  },
-  {
-    path: "/reports",
-    element: <Reports />,
-  },
-  {
-    path: "/settings",
-    element: <Settings />,
-  },
-  {
-    path: "/addjob",
-    element: <AddJob />,
-  },
-  {
-    path: "/profile",
-    element: <Profile />,
-  },
-  { path: "/generateReport", element: <GenerateReport /> },
-]);
+    future: {
+      v7_skipActionErrorRevalidation: true,
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true // Opt into React Router v7 revalidation behavior
+    },
+  }
+);
+
+// Render the application with providers
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <ThemeProvider>
     <AuthProvider>
-    <FontSizeProvider>
-  <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </FontSizeProvider>
+      <FontSizeProvider>
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
+      </FontSizeProvider>
     </AuthProvider>
-  
   </ThemeProvider>
 );

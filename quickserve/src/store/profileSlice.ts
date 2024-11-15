@@ -19,8 +19,8 @@ const initialState:ProfileState={
     fullName:''
 }
 
-export const fetchProfile=createAsyncThunk('profile/fetchProfile',async(id:string)=>{
-    const response=await axios.get(`http://localhost:3000/api/users/profile/${id}`);
+export const fetchProfile=createAsyncThunk('profile/fetchProfile',async(userId:string)=>{
+    const response=await axios.get(`http://localhost:3000/api/users/profile/${userId}`);
     return response.data;
 })
 

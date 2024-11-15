@@ -41,3 +41,16 @@
     opacity: 0;
   }
 }
+
+/* styles.css */
+.sidenav {
+  width: 80px; /* Adjust the width as needed */
+  min-height: 100vh; /* Full viewport height */
+  background-color: #1a202c; /* Adjust the background color as needed */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.content {
+  flex: 1; /* Take up the remaining space */
+  padding: 16px; /* Add some padding */
+}

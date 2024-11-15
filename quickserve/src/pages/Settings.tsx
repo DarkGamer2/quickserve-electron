@@ -6,6 +6,7 @@ import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
 import Modal from "../components/Modal";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -16,10 +17,20 @@ const Settings = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalColor, setModalColor] = useState('');
 
+  const { userId } = useParams<{ userId: string }>();
+
+  const showMessageModal = (message: string, color: string) => {
+    setModalType('message');
+    setModalMessage(message);
+    setModalColor(color);
+    setShowModal(true);
+  };
+
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = e.target.value + 'px';
     setFontSize(newSize);
     document.documentElement.style.setProperty('--font-size', newSize);
+    showMessageModal('Font size updated successfully', 'bg-green-500');
   };
 
   const handleDeleteAccount = () => {
@@ -37,16 +48,9 @@ const Settings = () => {
     setShowModal(false);
   };
 
-  const showMessageModal = (message: string, color: string) => {
-    setModalType('message');
-    setModalMessage(message);
-    setModalColor(color);
-    setShowModal(true);
-  };
-
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav />
+      <SideNav userId={userId} />
       <div className="flex-1 flex flex-col items-center justify-center p-4 dark:bg-black">
         <h1 className="text-center font-bebasneue text-4xl mb-8 dark:text-white">Settings</h1>
         <div className="flex items-center mb-4">
@@ -64,7 +68,7 @@ const Settings = () => {
           <select
             value={parseInt(fontSize)}
             onChange={handleFontSizeChange}
-            className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+            className="rounded-md bg-slate-300 font-outfit py-2 my-1 text-center"
           >
             <option value="10">10</option>
             <option value="12">12</option>
@@ -74,7 +78,7 @@ const Settings = () => {
           </select>
         </div>
         <div className="text-center mb-4">
-          <Link to="/profile">
+          <Link to={`/profile/${userId}`}>
             <button className="rounded-md py-2 px-3 text-white bg-orange-500">View Profile</button>
           </Link>
         </div>

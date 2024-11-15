@@ -52,7 +52,7 @@ export const jobTypeIcons: { [key: string]: string } = {
 };
 
 export const addJob = createAsyncThunk('form/addJob', async (formData: FormState) => {
-  const response = await axios.post('http://localhost:3000/api/jobs/addjob', formData);
+  const response = await axios.post('https://quickserve-api-production.up.railway.app/api/jobs/addjob', formData);
   return response.data;
 });
 

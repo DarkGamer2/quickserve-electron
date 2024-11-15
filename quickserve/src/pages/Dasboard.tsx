@@ -30,7 +30,11 @@ const Dashboard = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:3000/api/jobs/jobs");
+      const response = await axios.get("http://localhost:3000/api/jobs/jobs", {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
       console.log(response.data); // Log the response data
       const jobsWithImages = response.data.map((job: any) => ({
         ...job,
@@ -64,8 +68,10 @@ const Dashboard = () => {
               <LoopIcon className="animate-spin mr-2" />
               <span>Loading...</span>
             </div>
+          ) : jobs.length === 0 ? (
+            <div className="font-inter text-center dark:text-white text-2xl">No Jobs To Display</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
               {jobs.map((job: any) => (
                 <Job
                   key={job._id}

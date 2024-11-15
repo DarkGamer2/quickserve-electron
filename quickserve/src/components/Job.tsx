@@ -11,7 +11,7 @@ interface JobProps {
   jobId: string;
 }
 
-const Job: React.FC<JobProps> = ({ jobIcon, jobTitle, jobDescription, jobStatus, statusColor, jobId }) => {
+const Job: React.FC<JobProps> = ({ jobIcon, jobTitle, jobStatus, statusColor, jobId }) => {
   const { theme } = useTheme();
   return (
     <div className={`${theme === "dark" ? "dark" : "light"}`}>

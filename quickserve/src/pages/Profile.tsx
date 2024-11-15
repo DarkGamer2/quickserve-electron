@@ -9,16 +9,16 @@ import { fetchProfile } from '../store/profileSlice';
 import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 const Profile = () => {
   const { theme } = useTheme();
-  const { id } = useParams<{ id: string }>();
+  const { userId } = useParams<{ userId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const profileData = useSelector((state: RootState) => state.profile);
   const { email, skillset, loading, error,profilePic,fullName } = profileData;
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchProfile(id));
+    if (userId) {
+      dispatch(fetchProfile(userId));
     }
-  }, [dispatch, id]);
+  }, [dispatch, userId]);
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron/main')
+const { app, BrowserWindow,Notification } = require('electron/main')
 const path = require('node:path')
 
 function createWindow () {
@@ -13,8 +13,17 @@ function createWindow () {
   win.loadURL('http://localhost:1420')
 }
 
+const showNotification=()=>{
+  const notification=new Notification({
+    title:'Notification',
+    body:'Notification from the Main process'
+  })
+
+  notification.show()
+}
 app.whenReady().then(() => {
   createWindow()
+  showNotification()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
