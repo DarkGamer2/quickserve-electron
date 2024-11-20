@@ -1,57 +1,77 @@
-import React, { createContext, useEffect, useState } from "react";
-import api from "../../services/api";
+// FILE: src/context/auth/Auth.tsx
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+
+interface User {
+  _id: string;
+  email: string;
+  fullName: string;
+  skillset?: string[];
+  profilePic?: string;
+  role: string;
+}
 
 interface AuthContextType {
-    user: any;
-    token: string | null;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
-    register: (email: string, password: string, fullName: string, skillset: string[]) => Promise<void>;
+  user: User | null;
+  token: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
-
-    useEffect(() => {
-        if (token) {
-            api.getJobs(token).then((res) => {
-                setUser(res.data);
-            }).catch((err) => {
-                console.log(err);
-                setToken(null);
-                localStorage.removeItem('token');
-            });
-        }
-    }, [token]);
-
-    const login = async (email: string, password: string) => {
-        const response = await api.login(email, password);
-        setToken(response.data.token);
-        localStorage.setItem('token', response.data.token);
-        setUser(response.data.user);
-    };
-
-    const logout = () => {
-        setToken(null);
-        localStorage.removeItem('token');
-        setUser(null);
-    };
-
-    const register = async (email: string, password: string, fullName: string, skillset: string[]) => {
-        const response = await api.register(email, password, fullName, skillset);
-        setToken(response.data.token);
-        localStorage.setItem('token', response.data.token);
-        setUser(response.data.user);
-    };
-
-    return (
-        <AuthContext.Provider value={{ user, token, login, logout, register }}>
-            {children}
-        </AuthContext.Provider>
-    );
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
-export default AuthProvider;
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      console.log(`${user?._id}`);
+      if (token) {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/users/profile/${user?._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          });
+          setUser(response.data);
+        } catch (error) {
+          setToken(null);
+          localStorage.removeItem('token');
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [token, user?._id]);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/auth/login', { email, password }, { withCredentials: true });
+      setToken(response.data.token);
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user);
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
+
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

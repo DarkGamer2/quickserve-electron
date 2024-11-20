@@ -1,83 +1,123 @@
-// FILE: userController.ts
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
-import { UserInt } from '../interface/interfaces';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
-require("../auth/passportConfig")
+import { UserInt } from '../interface/interfaces';
+require("../auth/passportConfig");
 
-//TODO: fix login and register functions
 class userController {
     public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         passport.authenticate('local', (err: Error, user: UserInt, info: any) => {
             if (err) {
-                return next(err);
+                console.error('Login error:', err);
+                res.status(500).json({ message: 'Internal server error', error: err });
+                return;
             }
             if (!user) {
-                return res.status(401).json({ message: 'Authentication failed', info });
+                res.status(401).json({ message: 'Authentication failed', info });
+                return;
             }
-            req.logIn(user, (err: Error) => {
-                if (err) {
-                    return next(err);
+            req.logIn(user, (loginErr: Error) => {
+                if (loginErr) {
+                    console.error('Login session error:', loginErr);
+                    res.status(500).json({ message: 'Failed to log in', error: loginErr });
+                    return;
                 }
-                return res.status(200).json({ message: 'Authentication successful', user });
+                res.status(200).json({ message: 'Authentication successful', user });
             });
         })(req, res, next);
     }
 
-    public logout(req: Request, res: Response): void {
-        req.logout((err: Error) => {
-            if (err) {
-                return res.status(500).json({ message: 'Logout failed', err });
-            }
-            res.status(200).json({ message: 'Logout successful' });
-        });
+    public async logout(req: Request, res: Response): Promise<void> {
+        if (typeof req.logout === 'function') {
+            req.logout((err: Error) => {
+                if (err) {
+                    console.error('Logout error:', err);
+                    res.status(500).json({ message: 'Logout failed', error: err });
+                    return;
+                }
+                res.status(200).json({ message: 'Logout successful' });
+            });
+        } else {
+            req.session.destroy((err) => {
+                if (err) {
+                    console.error('Session destroy error:', err);
+                    res.status(500).json({ message: 'Logout failed', error: err });
+                    return;
+                }
+                res.status(200).json({ message: 'Logout successful' });
+            });
+        }
     }
 
     public async register(req: Request, res: Response): Promise<void> {
-        const user = new User(req.body);
-        if (typeof user.password !== 'string') {
-            res.status(400).json({ message: 'Invalid password' });
+        const { username, email, password } = req.body;
+
+        if (!username || !email || !password) {
+            res.status(400).json({ message: 'All fields are required' });
             return;
         }
-        const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        const newUser = new User({
-            username: user.name,
-            email: user.email,
-            password: hashedPassword
-        });
+        if (typeof password !== 'string' || password.length < 6) {
+            res.status(400).json({ message: 'Password must be at least 6 characters long' });
+            return;
+        }
 
         try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const newUser = new User({
+                username,
+                email,
+                password: hashedPassword,
+                skillSet: [],
+                role:req.body.role,
+                profilePic: req.body.profilePic,
+            });
+
             await newUser.save();
-            res.status(201).json(newUser);
+            res.status(201).json({ message: 'User registered successfully', user: newUser });
         } catch (err: any) {
-            res.status(400).json({ message: err.message });
+            if (err.code === 11000) {
+                res.status(400).json({ message: 'Email or username already exists' });
+            } else {
+                console.error('Registration error:', err);
+                res.status(500).json({ message: 'Error registering user', error: err.message });
+            }
         }
     }
 
     public async getUser(req: Request, res: Response): Promise<void> {
-        try {
-          const userId = req.params.id;
-          const user = await User.findById(userId);
-          if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-          }
-          res.json(user);
-        } catch (error) {
-          res.status(500).json({ message: 'Error fetching user', error });
-        }
-      }
-      public async getUsers(req: Request, res: Response): Promise<void> {
-        try {
-          const users = await User.find();
-          res.json(users);
-        } catch (error) {
-          res.status(500).json({ message: 'Error fetching users', error });
-        }
-      }
-}
+        const userId = req.params.id;
 
+    if (!userId) {
+      res.status(400).json({ message: "User ID parameter is required" });
+      return;
+    }
+
+    try {
+      const user = await User.findById(userId).select("-password"); // Exclude password field
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      res.status(200).json(user);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ message: "Error fetching user profile" });
+    }
+    }
+
+    public async getUsers(_: Request, res: Response): Promise<void> {
+        try {
+            const users = await User.find().select('-password');
+            res.status(200).json(users);
+        } catch (error) {
+            console.error('Get users error:', error);
+            res.status(500).json({ message: 'Error fetching users', error });
+        }
+    }
+}
 
 export default new userController();

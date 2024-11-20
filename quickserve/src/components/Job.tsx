@@ -27,7 +27,7 @@ const Job: React.FC<JobProps> = ({ jobIcon, jobTitle, jobStatus, statusColor, jo
           </button>
         </div>
         <div className="flex justify-center mt-2">
-          <Link to={`/${jobId}`}>
+          <Link to={`/details/${jobId}`}>
             <button className="text-orange-500 font-inter">More Details</button>
           </Link>
         </div>

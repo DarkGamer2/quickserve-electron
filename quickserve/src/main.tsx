@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dasboard";
+import Dashboard from "./pages/Dashboard";
 import Details from "./pages/Details";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
@@ -13,62 +13,67 @@ import { Provider } from "react-redux";
 import store from "./store/index";
 import { ThemeProvider } from "./context/theme/Theme";
 import { FontSizeProvider } from "./context/font/Font";
-import AuthProvider from "./context/auth/Auth";
+import { AuthProvider } from "./context/auth/Auth";
 import Report from "./components/Report";
 import Error from "./pages/Error";
-// Create the router with the future flag for v7 behavior
+import EditProfile from "./pages/EditProfile";
+
 const router = createBrowserRouter(
   [
     {
       path: "/",
       element: <App />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/register",
       element: <Register />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/dashboard",
       element: <Dashboard />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/details/:id",
       element: <Details />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/reports",
       element: <Reports />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/settings",
       element: <Settings />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/addjob",
       element: <AddJob />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/profile/:userId",
       element: <Profile />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
       path: "/generateReport",
       element: <GenerateReport />,
-      errorElement:<Error/>
+      errorElement: <Error />
     },
     {
-      path:"/report/:reportId",
-      element:<Report reportTitle="Sample Title" reportDescription="Sample Description" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
-      errorElement:<Error/>
+      path: "/report/:reportId",
+      element: <Report reportTitle="Sample Title" reportDescription="Sample Description" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
+      errorElement: <Error />
     },
+    {
+      path: "/profile/edit",
+      element: <EditProfile />
+    }
   ],
   {
     future: {
@@ -77,11 +82,10 @@ const router = createBrowserRouter(
       v7_fetcherPersist: true,
       v7_normalizeFormMethod: true,
       v7_partialHydration: true // Opt into React Router v7 revalidation behavior
-    },
+    }
   }
 );
 
-// Render the application with providers
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <ThemeProvider>
     <AuthProvider>

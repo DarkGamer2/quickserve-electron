@@ -9,20 +9,19 @@ import { useTheme } from "../context/theme/Theme";
 interface SideNavProps {
   userId?: string;
 }
-const SideNav: React.FC<SideNavProps> = ()=> {
+
+const SideNav: React.FC<SideNavProps> = () => {
   const { theme } = useTheme();
   return (
-    <div className={`${theme==="dark"?"dark":"light"}`}>
+    <div className={`${theme === "dark" ? "dark" : "light"}`}>
       <div className="">
-      <nav className="fixed top-0 left-0 h-screen w-10 list-none dark:bg-black">
-
+        <nav className="fixed top-0 left-0 h-screen w-10 list-none dark:bg-black">
           <NavLink to="/dashboard">
             <li className="text-green-500 py-6">
               <HomeIcon fontSize="large" />
             </li>
           </NavLink>
           <NavLink to="/reports">
-            {" "}
             <li className="text-purple-600 py-6">
               <AssessmentIcon fontSize="large" />
             </li>

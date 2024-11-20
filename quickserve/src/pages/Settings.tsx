@@ -1,12 +1,12 @@
 import SideNav from "../components/SideNav";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
 import Modal from "../components/Modal";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/auth/Auth";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -18,6 +18,18 @@ const Settings = () => {
   const [modalColor, setModalColor] = useState('');
 
   const { userId } = useParams<{ userId: string }>();
+  const { user } = useAuth();
+  const id = userId || user?._id;
+
+  useEffect(() => {
+    if (!id) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    // Fetch user data or perform other actions with userId
+    console.log("User ID:", id);
+  }, [id]);
 
   const showMessageModal = (message: string, color: string) => {
     setModalType('message');
@@ -50,7 +62,7 @@ const Settings = () => {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav userId={userId} />
+      <SideNav/>
       <div className="flex-1 flex flex-col items-center justify-center p-4 dark:bg-black">
         <h1 className="text-center font-bebasneue text-4xl mb-8 dark:text-white">Settings</h1>
         <div className="flex items-center mb-4">
@@ -78,7 +90,7 @@ const Settings = () => {
           </select>
         </div>
         <div className="text-center mb-4">
-          <Link to={`/profile/${userId}`}>
+          <Link to={`/profile/${id}`}>
             <button className="rounded-md py-2 px-3 text-white bg-orange-500">View Profile</button>
           </Link>
         </div>

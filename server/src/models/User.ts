@@ -7,7 +7,7 @@ dotenv.config();
 mongoose.connect(`${process.env.MONGO_URI}`)
 
 interface IUser extends Document{
-    name:string,
+    fullName:string,
     email:string,
     password:string,
     created_at:Date,
@@ -15,15 +15,17 @@ interface IUser extends Document{
     skillSet:string[],
     role:string,
     comparePassword: (password:string)=>Promise<boolean>
+    profilePic:string
 }
 const userSchema = new Schema({
-    name: String,
+    fullName: String,
     email: String,
     password: String,
     created_at: Date,
     updated_at: Date,
     skillSet: [String],
-    role: String
+    role: String,
+    profilePic: String,
 });
 
 userSchema.pre('save', async function (next) {

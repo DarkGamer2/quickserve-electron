@@ -8,6 +8,7 @@ import userRoutes from "./src/routes/userRoutes";
 import reportRoutes  from "./src/routes/reportRoutes";
 import passport from 'passport';
 require ("./src/auth/passportConfig");
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
 app.use(session({
     secret:"secret",
@@ -18,7 +19,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 const corsOptions = {
     origin: 'http://localhost:1420', // Replace with your frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)

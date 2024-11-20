@@ -23,7 +23,7 @@ const Reports = () => {
 
   const getReports = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/reports/list");
+      const response = await axios.get("http://localhost:3000/api/reports/list");
       setReports(response.data);
       setLoading(false);
     } catch (error) {
