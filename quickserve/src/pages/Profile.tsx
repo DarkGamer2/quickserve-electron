@@ -2,7 +2,7 @@ import { useTheme } from "../context/theme/Theme";
 import SideNav from "../components/SideNav";
 import { useState, useEffect } from "react";
 import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
-
+import { Link } from "react-router-dom";
 interface ProfileProps {
   profileData: {
     fullName: string;
@@ -43,9 +43,9 @@ const Profile = ({ profileData, profilePic }: ProfileProps) => {
               <p className="font-inter text-center dark:text-white">Email: {profileData?.email}</p>
               <p className="font-inter text-center dark:text-white">Skillset: {profileData?.skillSet?.join(', ')}</p>
               <div className="text-center mt-4">
-                <button className="bg-red-500 text-white font-inter rounded-md text-center px-3 py-1">
+              <Link to="/profile/edit">  <button className="bg-red-500 text-white font-inter rounded-md text-center px-3 py-1">
                   Edit Profile
-                </button>
+                </button></Link>
               </div>
             </>
           )}

@@ -1,23 +1,32 @@
 import SideNav from '../components/SideNav';
 import { useTheme } from '../context/theme/Theme';
 import { useState } from 'react';
-
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import {useEffect} from 'react';
 const EditProfile = () => {
   const { theme } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [skillset, setSkillset] = useState('');
-
-  const handleSaveChanges = () => {
+  const navigate=useNavigate();
+  const handleSaveChanges = async() => {
     // Handle save changes logic here
-    console.log('Save changes:', { fullName, email, skillset });
+   await axios.post("http://localhost:3000/api/users/profile/edit", {
+    fullName,
+    email,
+    skillset
+   });
   };
 
   const handleCancel = () => {
     // Handle cancel logic here
-    console.log('Cancel');
+    navigate(-1);
   };
 
+  useEffect(()=>{
+    handleSaveChanges();
+  },[])
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       <SideNav />
