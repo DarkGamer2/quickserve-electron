@@ -88,15 +88,15 @@ class userController {
     }
 
     public async getUser(req: Request, res: Response): Promise<void> {
-        const userId = req.params.id;
+        const id = req.params.id;
 
-    if (!userId) {
+    if (!id) {
       res.status(400).json({ message: "User ID parameter is required" });
       return;
     }
 
     try {
-      const user = await User.findById(userId).select("-password"); // Exclude password field
+      const user = await User.findById(id).select("-password"); // Exclude password field
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;

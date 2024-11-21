@@ -17,7 +17,7 @@ import { AuthProvider } from "./context/auth/Auth";
 import Report from "./components/Report";
 import Error from "./pages/Error";
 import EditProfile from "./pages/EditProfile";
-
+import PlaceholderProfilePic from "./assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
 const router = createBrowserRouter(
   [
     {
@@ -56,8 +56,8 @@ const router = createBrowserRouter(
       errorElement: <Error />
     },
     {
-      path: "/profile/:userId",
-      element: <Profile />,
+      path: "/profile/:id",
+      element: <Profile profileData={{ fullName: "John Doe", email: "john.doe@example.com", skillSet: ["Web Development", "PC Repairs", "Networking"] }} profilePic={PlaceholderProfilePic} />,
       errorElement: <Error />
     },
     {

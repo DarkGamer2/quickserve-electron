@@ -5,8 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
 import Modal from "../components/Modal";
+import Profile from "../pages/Profile"; // Import the Profile component
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/auth/Auth";
+import axios from "axios";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -16,19 +17,36 @@ const Settings = () => {
   const [modalType, setModalType] = useState<'message' | 'admin'>('message');
   const [modalMessage, setModalMessage] = useState('');
   const [modalColor, setModalColor] = useState('');
+  const { id } = useParams<{ id: string }>();
+  const [profileData, setProfileData] = useState<{ fullName: string; email: string; skillset?: string[] } | null>(null);
+  const [profilePic, setProfilePic] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
-  const { userId } = useParams<{ userId: string }>();
-  const { user } = useAuth();
-  const id = userId || user?._id;
+  const API_URL = "http://localhost:3000";
 
-  useEffect(() => {
+  const fetchData = async () => {
     if (!id) {
-      console.error("User ID is missing");
+      setError("User ID or email query parameter is required");
+      setLoading(false);
       return;
     }
 
-    // Fetch user data or perform other actions with userId
-    console.log("User ID:", id);
+    try {
+      const { data } = await axios.get(`${API_URL}/api/users/profile/${id}`);
+      if (data.profilePic) {
+        setProfilePic(data.profilePic);
+      }
+      setProfileData(data);
+      setLoading(false);
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Failed to fetch profile data");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, [id]);
 
   const showMessageModal = (message: string, color: string) => {
@@ -144,6 +162,10 @@ const Settings = () => {
           show={showModal}
           type="message"
         />
+      )}
+      {/* Render the Profile component and pass the profile data as props */}
+      {profileData && (
+        <Profile profileData={profileData} profilePic={profilePic} />
       )}
     </div>
   );

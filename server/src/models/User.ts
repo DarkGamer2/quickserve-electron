@@ -15,7 +15,8 @@ interface IUser extends Document{
     skillSet:string[],
     role:string,
     comparePassword: (password:string)=>Promise<boolean>
-    profilePic:string
+    profilePic:string,
+    id:string
 }
 const userSchema = new Schema({
     fullName: String,
@@ -26,6 +27,7 @@ const userSchema = new Schema({
     skillSet: [String],
     role: String,
     profilePic: String,
+    id:String
 });
 
 userSchema.pre('save', async function (next) {
