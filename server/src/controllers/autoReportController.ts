@@ -6,7 +6,7 @@ dotenv.config();
 
 class AutoReportController {
   // Method to generate a report
-  public async generateReport(req: Request, res: Response, next: NextFunction) {
+  public generateReport = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Extracting necessary fields from the request body
       const { reportType, category, email, startDate, endDate, fields, status } = req.body;
@@ -42,10 +42,10 @@ class AutoReportController {
       // Handling errors and passing them to the next middleware
       next(error);
     }
-  }
+  };
 
   // Method to fetch data based on the provided filters and fields
-  private async fetchData(category: string, startDate: Date, endDate: Date, fields: string[]): Promise<any[]> {
+  private fetchData = async (category: string, startDate: Date, endDate: Date, fields: string[]): Promise<any[]> => {
     // Replace this with your actual data fetching logic
     // For example, querying a database based on the filters and fields
     const data = await Report.find({ category, startDate, endDate, fields });
@@ -65,10 +65,10 @@ class AutoReportController {
     });
 
     return selectedData;
-  }
+  };
 
   // Method to send an email with the generated report
-  private async sendEmail(to: string, report: any) {
+  private sendEmail = async (to: string, report: any) => {
     // Creating a transporter object with Gmail service credentials
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -88,7 +88,31 @@ class AutoReportController {
 
     // Sending the email
     await transporter.sendMail(mailOptions);
-  }
+  };
+
+  // Method to get all reports
+  public getReports = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reports = await Report.find();
+      res.status(200).json(reports);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Method to get a single report by ID
+  public getReport = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const report = await Report.findById(req.params.id);
+      if (!report) {
+        res.status(404).json({ message: "Report not found" });
+      } else {
+        res.status(200).json(report);
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 // Exporting an instance of the AutoReportController class

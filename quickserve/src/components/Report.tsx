@@ -1,45 +1,27 @@
 // FILE: src/components/Report.tsx
-import React, { useEffect } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-
+import { useTheme } from "../context/theme/Theme";
 interface ReportProps {
   reportTitle: string;
-  reportDescription: string;
+  reportType: string;
   reportDate: string;
   reportThumbnail: string;
 }
 
-
-const Report: React.FC<ReportProps> = ({ reportTitle, reportDescription, reportDate, reportThumbnail }) => {
-  const {reportId}=useParams();
-  const getReportDetails=async()=>{
-    try {
-      const response = await axios.get(`http://localhost:3000/api/reports/${reportId}`, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
-      console.log(response.data); // Log the response data
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  
-  useEffect(()=>{
-    getReportDetails();
-  })
+const Report: React.FC<ReportProps> = (props:ReportProps) => {
+ const {theme} = useTheme();
   return (
-    <div className="bg-gray-100 rounded-md p-4 shadow-md mb-4 dark:bg-gray-800">
+   <div className={`${theme==="dark"?"dark":"light"}`}>
+     <div className="bg-white dark:bg-black rounded-lg shadow-md p-6 mb-4">
       <div className="flex items-center mb-4">
-        <img src={reportThumbnail} alt="Report Thumbnail" className="h-16 w-16 mr-4" />
+        <img src={props.reportThumbnail} alt="Report Thumbnail" className="h-16 w-16 rounded-md mr-4" />
         <div>
-          <h2 className="font-bold text-lg dark:text-white">{reportTitle}</h2>
-          <p className="text-sm dark:text-gray-300">{reportDate}</p>
+          <h2 className="font-bold text-xl dark:text-white">{props.reportTitle}</h2>
+          <p className="text-sm text-gray-500 dark:text-white">{props.reportDate}</p>
         </div>
       </div>
-      <p className="dark:text-white">{reportDescription}</p>
+      <p className="text-gray-700 dark:text-white mb-4">{props.reportType}</p>
     </div>
+   </div>
   );
 };
 

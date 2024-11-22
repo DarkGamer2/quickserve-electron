@@ -13,6 +13,7 @@ const Reports = () => {
     title: string;
     description: string;
     date: string;
+    reportType: string;
     // Add other properties of the report object here
   }
   
@@ -37,31 +38,32 @@ const Reports = () => {
   }, []);
 
   return (
-    <div className={`min-h-screen flex ${theme === "dark" ? "dark" : "light"}`}>
-      <div className="dark:bg-black">
-        <SideNav />
-      </div>
-      <div className="flex-1 p-4 dark:bg-black">
-        <h1 className="text-center font-bebasneue text-4xl mb-8 dark:text-white">Reports</h1>
+    <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
+      <SideNav />
+      <div className="flex-1 p-4 dark:bg-black bg-gray-100">
+        <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">Reports</h1>
         {loading ? (
           <div className="flex items-center justify-center text-orange-500 font-inter">
             <LoopIcon className="animate-spin mr-2" />
             <span>Loading...</span>
           </div>
         ) : reports.length === 0 ? (
-          <p className="font-inter text-center dark:text-white">No Reports To Display</p>
+          <div className="font-inter text-center dark:text-white text-2xl">No Reports To Display</div>
         ) : (
-          reports.map((report) => (
-            <Report
-              key={report.id}
-              reportThumbnail={ReportThumbnail}
-              reportTitle={report.title}
-              reportDescription={report.description}
-              reportDate={report.date}
-            />
-          ))
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {reports.map((report: ReportType) => (
+              <Link to={`/reportDetails/${report.id}`} key={report.id}>
+                <Report
+                  reportThumbnail={ReportThumbnail}
+                  reportTitle={report.title}
+                  reportType={report.reportType}
+                  reportDate={report.date}
+                />
+              </Link>
+            ))}
+          </div>
         )}
-        <div className="text-center mt-4">
+        <div className="text-center mt-8">
           <Link to="/generateReport">
             <button className="rounded-md py-2 px-3 bg-green-600 text-white font-inter">
               Generate Report
@@ -71,7 +73,6 @@ const Reports = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Reports;

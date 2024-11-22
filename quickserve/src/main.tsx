@@ -18,6 +18,7 @@ import Report from "./components/Report";
 import Error from "./pages/Error";
 import EditProfile from "./pages/EditProfile";
 import PlaceholderProfilePic from "./assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+import ReportDetails from "./pages/ReportDetails";
 const router = createBrowserRouter(
   [
     {
@@ -67,12 +68,16 @@ const router = createBrowserRouter(
     },
     {
       path: "/report/:reportId",
-      element: <Report reportTitle="Sample Title" reportDescription="Sample Description" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
+      element: <Report reportTitle="Sample Title" reportType="" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
       errorElement: <Error />
     },
     {
       path: "/profile/edit",
       element: <EditProfile />
+    },
+    {
+      path:"/reportDetails/:id",
+      element:<ReportDetails/>
     }
   ],
   {

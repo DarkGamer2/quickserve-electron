@@ -15,8 +15,8 @@ function createWindow () {
 
 const showNotification=()=>{
   const notification=new Notification({
-    title:'Notification',
-    body:'Notification from the Main process'
+    title:'QuickServe',
+    body:'The app has started successfully.'
   })
 
   notification.show()
