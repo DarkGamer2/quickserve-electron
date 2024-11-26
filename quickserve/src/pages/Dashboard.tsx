@@ -48,13 +48,32 @@ const Dashboard = () => {
     }
   };
 
+  const checkJobExpiry = () => {
+    const now = new Date();
+    jobs.forEach((job: any) => {
+      const expiryDate = new Date(job.creationDate);
+      expiryDate.setDate(expiryDate.getDate() + 3);
+      const timeDiff = expiryDate.getTime() - now.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      if (daysDiff <= 3 && daysDiff >= 0) {
+        (window as any).electron.sendJobExpiryWarning(job.jobName, daysDiff);
+      }
+    });
+  };
+
   useEffect(() => {
     fetchJobs();
   }, []);
 
+  useEffect(() => {
+    if (jobs.length > 0) {
+      checkJobExpiry();
+    }
+  }, [jobs]);
+
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav />
+      <SideNav userId="someUserId" />
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">QuickServe</h1>
         <h3 className="font-inter text-center text-xl dark:text-white">

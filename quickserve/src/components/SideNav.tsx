@@ -7,14 +7,15 @@ import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 
 interface SideNavProps {
-  userId?: string;
+  userId: string;  // User ID passed as a prop
 }
 
-const SideNav: React.FC<SideNavProps> = () => {
+const SideNav: React.FC<SideNavProps> = ({ userId }) => {
   const { theme } = useTheme();
+
   return (
     <div className={`${theme === "dark" ? "dark" : "light"}`}>
-      <div className="">
+      <div>
         <nav className="fixed top-0 left-0 h-screen w-10 list-none dark:bg-black">
           <NavLink to="/dashboard">
             <li className="text-green-500 py-6">
@@ -31,7 +32,8 @@ const SideNav: React.FC<SideNavProps> = () => {
               <AssignmentIcon fontSize="large" />
             </li>
           </NavLink>
-          <NavLink to={`/settings`}>
+          {/* Updated Settings link with dynamic userId */}
+          <NavLink to={`/settings/${userId}`}>
             <li className="text-orange-800 py-6">
               <SettingsIcon fontSize="large" />
             </li>

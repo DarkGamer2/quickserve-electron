@@ -1,15 +1,22 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import userController from '../controllers/userController';
-import { Request,Response,NextFunction } from 'express';
+
 const router = Router();
 
-router.get('/profile/:id', async (req:Request, res:Response, next:NextFunction) => {
+// Profile route
+router.get('/profile/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-	await userController.getUser(req, res);
-  } catch (error:any) {
-	next(error);
+    // Call the controller method and return the response here
+    await userController.getUser(req, res);  
+  } catch (error: any) {
+    // Pass the error to the next middleware for handling
+    next(error);  
   }
 });
-router.get('/users', (req:Request, res:Response, next:NextFunction) => userController.getUsers(req, res).catch(next));
+
+// Get all users
+router.get('/users', (req: Request, res: Response, next: NextFunction) => {
+  userController.getUsers(req, res).catch(next);
+});
 
 export default router;

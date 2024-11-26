@@ -3,121 +3,135 @@ import passport from 'passport';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import { UserInt } from '../interface/interfaces';
+import mongoose from "mongoose";
 require("../auth/passportConfig");
 
-class userController {
+class UserController {
+    // Login User
     public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         passport.authenticate('local', (err: Error, user: UserInt, info: any) => {
             if (err) {
                 console.error('Login error:', err);
-                res.status(500).json({ message: 'Internal server error', error: err });
-                return;
+                return res.status(500).json({ message: 'Internal server error', error: err });
             }
             if (!user) {
-                res.status(401).json({ message: 'Authentication failed', info });
-                return;
+                return res.status(401).json({ message: 'Authentication failed', info });
             }
             req.logIn(user, (loginErr: Error) => {
                 if (loginErr) {
                     console.error('Login session error:', loginErr);
-                    res.status(500).json({ message: 'Failed to log in', error: loginErr });
-                    return;
+                    return res.status(500).json({ message: 'Failed to log in', error: loginErr });
                 }
-                res.status(200).json({ message: 'Authentication successful', user });
+                return res.status(200).json({ message: 'Authentication successful', user });
             });
         })(req, res, next);
     }
 
+    // Logout User
     public async logout(req: Request, res: Response): Promise<void> {
         if (typeof req.logout === 'function') {
             req.logout((err: Error) => {
                 if (err) {
                     console.error('Logout error:', err);
-                    res.status(500).json({ message: 'Logout failed', error: err });
-                    return;
+                    return res.status(500).json({ message: 'Logout failed', error: err });
                 }
-                res.status(200).json({ message: 'Logout successful' });
+                return res.status(200).json({ message: 'Logout successful' });
             });
         } else {
             req.session.destroy((err) => {
                 if (err) {
                     console.error('Session destroy error:', err);
-                    res.status(500).json({ message: 'Logout failed', error: err });
-                    return;
+                    return res.status(500).json({ message: 'Logout failed', error: err });
                 }
-                res.status(200).json({ message: 'Logout successful' });
+                return res.status(200).json({ message: 'Logout successful' });
             });
         }
     }
 
-    public async register(req: Request, res: Response): Promise<void> {
-        const { username, email, password } = req.body;
+    // Register User
+    public async register(req: Request, res: Response): Promise<Response> {
+        const { username, email, password, role, profilePic } = req.body;
 
+        // Validate required fields
         if (!username || !email || !password) {
-            res.status(400).json({ message: 'All fields are required' });
-            return;
+            return res.status(400).json({ message: 'All fields are required' });
         }
 
+        // Validate password length
         if (typeof password !== 'string' || password.length < 6) {
-            res.status(400).json({ message: 'Password must be at least 6 characters long' });
-            return;
+            return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+        }
+
+        // Validate email format
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
         }
 
         try {
+            // Check if user already exists
+            const existingUser = await User.findOne({ email });
+            if (existingUser) {
+                return res.status(400).json({ message: 'Email already exists' });
+            }
+
+            // Hash the password
             const hashedPassword = await bcrypt.hash(password, 10);
 
+            // Create a new user
             const newUser = new User({
                 username,
                 email,
                 password: hashedPassword,
                 skillSet: [],
-                role:req.body.role,
-                profilePic: req.body.profilePic,
+                role,
+                profilePic,
             });
 
+            // Save the new user
             await newUser.save();
-            res.status(201).json({ message: 'User registered successfully', user: newUser });
+            return res.status(201).json({ message: 'User registered successfully', user: newUser });
         } catch (err: any) {
-            if (err.code === 11000) {
-                res.status(400).json({ message: 'Email or username already exists' });
-            } else {
-                console.error('Registration error:', err);
-                res.status(500).json({ message: 'Error registering user', error: err.message });
-            }
+            console.error('Registration error:', err);
+            return res.status(500).json({ message: 'Error registering user', error: err.message });
         }
     }
 
-    public async getUser(req: Request, res: Response): Promise<void> {
+    // Get User by ID
+    public async getUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
 
-    if (!id) {
-      res.status(400).json({ message: "User ID parameter is required" });
-      return;
-    }
+        // Validate ObjectId
+        if (!id) {
+            return res.status(400).json({ message: "User ID parameter is required" });
+        }
 
-    try {
-      const user = await User.findById(id).select("-password"); // Exclude password field
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid User ID" });
+        }
 
-      res.status(200).json(user);
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ message: "Error fetching user profile" });
-    }
-    }
-
-    public async getUsers(_: Request, res: Response): Promise<void> {
         try {
-            const users = await User.find().select('-password');
-            res.status(200).json(users);
-        } catch (error) {
+            const user = await User.findById(id).select("-password"); // Exclude password field
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            return res.status(200).json(user);  // Return the full user object
+        } catch (error: any) {
+            console.error("Error fetching user:", error);
+            return res.status(500).json({ message: "Error fetching user profile", error: error.message });
+        }
+    }
+
+    // Get All Users
+    public async getUsers(_: Request, res: Response): Promise<Response> {
+        try {
+            const users = await User.find().select('-password'); // Exclude passwords
+            return res.status(200).json(users);
+        } catch (error: any) {
             console.error('Get users error:', error);
-            res.status(500).json({ message: 'Error fetching users', error });
+            return res.status(500).json({ message: 'Error fetching users', error: error.message });
         }
     }
 }
 
-export default new userController();
+export default new UserController();

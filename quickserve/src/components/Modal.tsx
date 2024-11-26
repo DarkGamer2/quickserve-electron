@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   show: boolean;
   type: 'message' | 'admin';
+  children?: React.ReactNode; // Add children prop to allow additional content
 }
 
-const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type }) => {
+const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type, children }) => {
   useEffect(() => {
     if (type === 'message' && show) {
       const timer = setTimeout(onClose, 5000);
@@ -33,6 +34,7 @@ const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type }) =>
               &times;
             </button>
             <div>{message}</div>
+            <div className="mt-4">{children}</div> {/* Render additional content */}
           </div>
         </>
       )}

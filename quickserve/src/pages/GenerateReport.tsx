@@ -19,14 +19,15 @@ const GenerateReport = () => {
 const [reportName, setReportName] = useState("");
 const [dataType, setDataType] = useState("");
 const [category, setCategory] = useState("");
-const [showModal,setShowModal]=useState(false);
-const [modalMessage,setModalMessage]=useState("");
-const [modalColor,setModalColor]=useState("");
 const [reportType,setReportType]=useState("Manual");
 const [frequency,setFrequency]=useState("");
 const [startDate,setStartDate]=useState<string>("");
 const [endDate,setEndDate]=useState<string>("");
 const [employees,setEmployees]=useState([]);
+const [informationRequired,setInformationRequired]=useState("");
+const [showModal,setShowModal]=useState(false);
+const [modalMessage,setModalMessage]=useState("");
+const [modalColor,setModalColor]=useState("");
 const submitReport = async (e:React.FormEvent) => {
     e.preventDefault();
     await axios.post("http://localhost:3000/api/reports/generate-report", {
@@ -36,7 +37,8 @@ const submitReport = async (e:React.FormEvent) => {
         reportType,
         frequency,
         startDate,
-        endDate
+        endDate,
+        informationRequired
     },{
         headers: {
             "Content-Type": "application/json"
@@ -139,6 +141,10 @@ useEffect(() => {
             <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white" />
             <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white" />
           </div>
+        </div>
+        <div>
+          <label className="dark:text-white text-center">Information Required</label>
+          <input type="text" value={informationRequired} onChange={(e) => setInformationRequired(e.target.value)} className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white" />
         </div>
       </div>
            <div className="text-center">

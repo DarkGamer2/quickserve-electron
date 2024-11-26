@@ -5,7 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Details from "./pages/Details";
 import Reports from "./pages/Reports";
-import Settings from "./pages/Settings";
+import Settings from "./pages/Settings";  // Settings page import
 import AddJob from "./pages/AddJob";
 import Profile from "./pages/Profile";
 import GenerateReport from "./pages/GenerateReport";
@@ -14,71 +14,84 @@ import store from "./store/index";
 import { ThemeProvider } from "./context/theme/Theme";
 import { FontSizeProvider } from "./context/font/Font";
 import { AuthProvider } from "./context/auth/Auth";
-import Report from "./components/Report";
+import PrivateRoute from "./components/PrivateRoute";
 import Error from "./pages/Error";
 import EditProfile from "./pages/EditProfile";
-import PlaceholderProfilePic from "./assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
 import ReportDetails from "./pages/ReportDetails";
+import ReportPDF from "./components/ReportPDF";
+
+// Create the router with correct paths
 const router = createBrowserRouter(
   [
     {
       path: "/",
       element: <App />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
       path: "/register",
       element: <Register />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
       path: "/dashboard",
-      element: <Dashboard />,
-      errorElement: <Error />
+      element:(
+        <PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>
+      ),
+      errorElement: <Error />,
     },
     {
       path: "/details/:id",
       element: <Details />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
       path: "/reports",
       element: <Reports />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
+    // Corrected path for Settings page
     {
-      path: "/settings",
+      path: "/settings/:id",
       element: <Settings />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
       path: "/addjob",
       element: <AddJob />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
-      path: "/profile/:id",
-      element: <Profile profileData={{ fullName: "John Doe", email: "john.doe@example.com", skillSet: ["Web Development", "PC Repairs", "Networking"] }} profilePic={PlaceholderProfilePic} />,
-      errorElement: <Error />
+      path: "/profile/:id",    // Correct path for profile page
+      element: (
+        <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
+      ),
+      errorElement: <Error />,
+    },
+    {
+      path: "/profile/:id/edit",
+      element: <EditProfile />,
+      errorElement: <Error />,
     },
     {
       path: "/generateReport",
       element: <GenerateReport />,
-      errorElement: <Error />
+      errorElement: <Error />,
     },
     {
-      path: "/report/:reportId",
-      element: <Report reportTitle="Sample Title" reportType="" reportDate={new Date().toISOString()} reportThumbnail="sample-thumbnail.png" />,
-      errorElement: <Error />
+      path: "/reportDetails/:reportId",
+      element: <ReportDetails />,
+      errorElement: <Error />,
     },
-    {
-      path: "/profile/edit",
-      element: <EditProfile />
-    },
-    {
-      path:"/reportDetails/:id",
-      element:<ReportDetails/>
-    }
+    // {
+    //   path: "/reportDetails/:reportId/pdf",
+    //   element: <ReportPDF />,
+    //   errorElement: <Error />,
+    // },
   ],
   {
     future: {
@@ -86,8 +99,8 @@ const router = createBrowserRouter(
       v7_relativeSplatPath: true,
       v7_fetcherPersist: true,
       v7_normalizeFormMethod: true,
-      v7_partialHydration: true // Opt into React Router v7 revalidation behavior
-    }
+      v7_partialHydration: true,
+    },
   }
 );
 

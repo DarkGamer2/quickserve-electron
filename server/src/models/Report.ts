@@ -1,8 +1,12 @@
-import mongoose from "mongoose";
-import { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 interface IReport extends Document {
+  reportName: string;
   reportType: string;
+  dataType: string;
+  category: string;
+  employee: string;
+  informmationRequired: string;
   generationDate: Date;
   status: string;
   requestedInformation: {
@@ -13,11 +17,31 @@ interface IReport extends Document {
     };
     fields: string[];
   };
-  generatedData: any[]; // You can adjust the type based on your data structure
+  generatedData: any[];
 }
 
 const reportSchema = new Schema<IReport>({
+  reportName:{
+    type: String,
+    required: true
+  },
   reportType: {
+    type: String,
+    required: true,
+  },
+  dataType: {
+    type: String,
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+  employee: {
+    type: String,
+    required: true,
+  },
+  informmationRequired: {
     type: String,
     required: true,
   },
@@ -52,11 +76,11 @@ const reportSchema = new Schema<IReport>({
     },
   },
   generatedData: {
-    type: [Schema.Types.Mixed] as unknown as any[], // Cast to unknown first, then to any[]
     default: [],
   },
 });
 
+// Define the model based on the schema
 const Report = mongoose.model<IReport>("Report", reportSchema);
 
 export default Report;

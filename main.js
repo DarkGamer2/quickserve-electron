@@ -1,39 +1,41 @@
-const { app, BrowserWindow,Notification } = require('electron/main')
-const path = require('node:path')
+const { app, BrowserWindow, Notification, ipcMain } = require('electron');
+const path = require('path');
 
-function createWindow () {
-  const win = new BrowserWindow({
+let mainWindow;
+
+const createWindow = () => {
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      enableRemoteModule: false,
+      nodeIntegration: false,
+    },
+  });
 
-  win.loadURL('http://localhost:1420')
-}
+  mainWindow.loadURL('http://localhost:3000'); // Adjust the URL to your React app
+};
 
-const showNotification=()=>{
-  const notification=new Notification({
-    title:'QuickServe',
-    body:'The app has started successfully.'
-  })
-
-  notification.show()
-}
-app.whenReady().then(() => {
-  createWindow()
-  showNotification()
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
-})
+app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+ipcMain.on('job-expiry-warning', (event, { jobName, days }) => {
+  const notification = new Notification({
+    title: 'QuickServe',
+    body: `Warning: ${jobName} is about to expire in ${days} days.`,
+  });
+  notification.show();
+});
