@@ -19,4 +19,8 @@ router.get('/users', (req: Request, res: Response, next: NextFunction) => {
   userController.getUsers(req, res).catch(next);
 });
 
+// Get user by ID
+router.get('/users/:id', (req: Request, res: Response, next: NextFunction) => {
+  userController.getUser(req, res).catch(next);
+});
 export default router;

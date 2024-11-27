@@ -12,6 +12,7 @@ const Reports = () => {
   interface ReportType {
     _id: string; // Use _id for consistency with MongoDB ObjectId
     reportType: string;
+    reportName: string;
     generationDate: string;
     status: string;
     requestedInformation: {
@@ -71,7 +72,7 @@ const Reports = () => {
               <Link to={`/reportDetails/${report._id}`} key={report._id}>
                 <Report
                   reportThumbnail={ReportThumbnail} // Placeholder image or thumbnail
-                  reportTitle={report.reportType}
+                  reportTitle={report.reportName}
                   reportType={report.reportType}
                   reportDate={new Date(report.generationDate).toLocaleDateString()} // Format date as needed
                 />

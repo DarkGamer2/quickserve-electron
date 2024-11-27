@@ -4,8 +4,9 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import { Link, useParams } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
-import Modal from "../components/Modal"; // Import the Profile component
+import Modal from "../components/Modal";
 import { useState } from "react";
+import { useAuth } from "../context/auth/Auth";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -16,6 +17,7 @@ const Settings = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalColor, setModalColor] = useState('');
   const { id } = useParams<{ id: string }>();
+  const { logout } = useAuth();
 
   const showMessageModal = (message: string, color: string) => {
     setModalType('message');
@@ -47,8 +49,10 @@ const Settings = () => {
   };
 
   const handleLogout = () => {
-    // Handle logout logic
+    logout();
   };
+
+
 
   // Provide a fallback if id is undefined
   const userId = id || ""; // Set default to empty string or handle differently
@@ -58,7 +62,7 @@ const Settings = () => {
       {/* Pass userId (fallback in case id is undefined) to SideNav */}
       <SideNav userId={userId} />
       
-      <div className="flex-1 flex flex-col items-center justify-center p-4 dark:bg-black">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 dark:bg-black bg-gray-100">
         <h1 className="text-center font-bebasneue text-4xl mb-8 dark:text-white">Settings</h1>
 
         <div className="flex items-center mb-4">
@@ -98,8 +102,20 @@ const Settings = () => {
             Delete Account
           </button>
         </div>
-        <div><button className="dark:text-white" onClick={handleLogout}>Logout</button></div>
+        <div>
+          <button onClick={handleLogout} className="bg-red-500 text-white font-inter rounded-md text-center px-3 py-1 mt-4">
+            Logout
+          </button>
+        </div>
       </div>
+      <Modal
+        color={modalColor}
+        message={modalMessage}
+        onClose={handleCloseModal}
+        show={showModal}
+        type={modalType}
+        onSubmit={handleConfirmDelete}
+      />
     </div>
   );
 };
