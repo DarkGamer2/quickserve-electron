@@ -1,6 +1,7 @@
+// FILE: src/context/auth/Auth.tsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-
+import { useParams } from 'react-router-dom';
 interface User {
   _id: string;
   email: string;
@@ -16,7 +17,6 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
-
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = (): AuthContextType => {
@@ -30,53 +30,52 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [loading, setLoading] = useState<boolean>(true); // Added loading state for better UX
-
-  // Fetch user profile data after authentication
+  const [loading, setLoading] = useState<boolean>(true);
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
     const fetchProfile = async () => {
-      // Ensure that both token and user._id are available before making the request
-      if (token && user?._id) {
+      if (token) {
         try {
-          const response = await axios.get(`http://localhost:3000/api/users/profile/${user._id}`, {
+          const response = await axios.get(`http://localhost:3000/api/users/profile/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           });
-          setUser(response.data); // Set user data after fetching
+          setUser(response.data);
         } catch (error) {
           console.error('Error fetching profile:', error);
           setToken(null);
-          localStorage.removeItem('token'); // Remove token if the request fails
+          localStorage.removeItem('token');
         } finally {
-          setLoading(false); // Stop loading when the fetch is complete
+          setLoading(false);
         }
       } else {
-        setLoading(false); // No token or user, stop loading
+        setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [token, user?._id]); // Re-run effect if token or user._id changes
+  }, [token]);
 
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post('http://localhost:3000/api/auth/login', { email, password }, { withCredentials: true });
       setToken(response.data.token);
       localStorage.setItem('token', response.data.token);
-      setUser(response.data.user); // Immediately set user after login
+      setUser(response.data.user);
     } catch (error) {
       console.error('Login failed', error);
+      throw error;
     }
   };
 
   const logout = () => {
     setToken(null);
     localStorage.removeItem('token');
-    setUser(null); // Clear user data on logout
+    setUser(null);
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading state while fetching profile
+    return <div>Loading...</div>;
   }
 
   return (

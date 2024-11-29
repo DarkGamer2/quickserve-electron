@@ -30,7 +30,9 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    fetchData();
+    if (id) {
+      fetchData();
+    }
   }, [id]);
 
   if (!user) {
@@ -49,7 +51,7 @@ const Profile = () => {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>
-      <SideNav userId="userId" />
+      <SideNav userId={user._id} />
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">Profile</h1>
         <div className="flex flex-col items-center justify-center mt-8">
@@ -66,7 +68,7 @@ const Profile = () => {
               <p className="font-inter text-center dark:text-white">Email: {profileData.email}</p>
               <p className="font-inter text-center dark:text-white">Skillset: {profileData.skillset ? profileData.skillset.join(', ') : 'No skillset available'}</p>
               <div className="text-center mt-4">
-                <Link to="/profile/edit">
+                <Link to={`/profile/${user._id}/edit`}>
                   <button className="bg-orange-500 text-white font-inter rounded-md text-center px-3 py-1">
                     Edit Profile
                   </button>

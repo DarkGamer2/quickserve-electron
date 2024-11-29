@@ -25,6 +25,7 @@ interface FormState {
     productSerialNumber?: string;
   };
   successMessage?: string;
+  errorMessage?: string;
 }
 
 const initialState: FormState = {
@@ -43,6 +44,7 @@ const initialState: FormState = {
     productSerialNumber: '',
   },
   successMessage: '',
+  errorMessage: '',
 };
 
 export const jobTypeIcons: { [key: string]: string } = {
@@ -51,9 +53,16 @@ export const jobTypeIcons: { [key: string]: string } = {
   'Networking': Networking,
 };
 
-export const addJob = createAsyncThunk('form/addJob', async (formData: FormState) => {
-  const response = await axios.post('https://quickserve-api-production.up.railway.app/api/jobs/addjob', formData);
-  return response.data;
+export const addJob = createAsyncThunk('form/addJob', async (formData: FormState, { rejectWithValue }) => {
+  try {
+    const response = await axios.post('https://quickserve-api-production.up.railway.app/api/jobs/addjob', formData);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue(error.message);
+  }
 });
 
 const formSlice = createSlice({
@@ -71,11 +80,18 @@ const formSlice = createSlice({
     resetForm: () => initialState,
   },
   extraReducers: (builder) => {
-    builder.addCase(addJob.fulfilled, (state, action) => {
-      // Handle successful job creation
-      state.successMessage = 'Job created successfully!';
-      console.log(action.payload);
-    });
+    builder
+      .addCase(addJob.fulfilled, (state, action) => {
+        // Handle successful job creation
+        state.successMessage = 'Job created successfully!';
+        state.errorMessage = '';
+        console.log(action.payload);
+      })
+      .addCase(addJob.rejected, (state, action) => {
+        // Handle job creation error
+        state.errorMessage = action.payload as string;
+        state.successMessage = '';
+      });
   },
 });
 

@@ -100,25 +100,19 @@ class UserController {
     // Get User by ID
     public async getUser(req: Request, res: Response): Promise<Response> {
         const id = req.params.id;
-
-        // Validate ObjectId
-        if (!id) {
-            return res.status(400).json({ message: "User ID parameter is required" });
-        }
-
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid User ID" });
+            return res.status(400).json({ message: 'Invalid user ID' });
         }
 
         try {
-            const user = await User.findById(id).select("-password"); // Exclude password field
+            const user = await User.findOne({ _id: id });
             if (!user) {
-                return res.status(404).json({ message: "User not found" });
+                return res.status(404).json({ message: 'User not found' });
             }
-            return res.status(200).json(user);  // Return the full user object
-        } catch (error: any) {
-            console.error("Error fetching user:", error);
-            return res.status(500).json({ message: "Error fetching user profile", error: error.message });
+            return res.status(200).json(user);
+        } catch (err: any) {
+            console.error('Get user error:', err);
+            return res.status(500).json({ message: 'Error fetching user', error: err.message });
         }
     }
 

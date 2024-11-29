@@ -1,5 +1,6 @@
 // FILE: Dashboard.tsx
 import { useState, useEffect } from "react";
+
 import SideNav from "../components/SideNav";
 import Job from "../components/Job";
 import LoopIcon from '@mui/icons-material/Loop';
@@ -9,6 +10,17 @@ import Networking from "../assets/images/networking.jpg";
 import { useTheme } from "../context/theme/Theme";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../context/auth/Auth";
+
+interface Job {
+  _id: string;
+  jobName: string;
+  jobDescription: string;
+  jobStatus: string;
+  creationDate: string;
+  icon: string;
+  jobType: string;
+}
 
 declare global {
   interface Window {
@@ -17,7 +29,6 @@ declare global {
     };
   }
 }
-
 const statusColors: { [key: string]: string } = {
   "In Progress": "bg-inProgress",
   "Completed": "bg-completed",
@@ -33,29 +44,20 @@ const jobTypeImages: { [key: string]: string } = {
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
-  const [jobs, setJobs] = useState([]);
-  const [user, setUser] = useState<any>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const { theme } = useTheme();
   const { id } = useParams<{ id: string }>();
-
-  const getUser = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3000/api/users/users/${id}`);
-      setUser(response.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  const { user } = useAuth();
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:3000/api/jobs/jobs", {
+      const response = await axios.get(`http://localhost:3000/api/jobs/user/${user?._id}`, {
         headers: {
           'Access-Control-Allow-Origin': '*',
         },
       });
-      const jobsWithImages = response.data.map((job: any) => ({
+      const jobsWithImages = response.data.map((job: Job) => ({
         ...job,
         icon: jobTypeImages[job.jobType] || "",
       }));
@@ -69,7 +71,7 @@ const Dashboard = () => {
 
   const checkJobExpiry = () => {
     const now = new Date();
-    jobs.forEach((job: any) => {
+    jobs.forEach((job: Job) => {
       const expiryDate = new Date(job.creationDate);
       expiryDate.setDate(expiryDate.getDate() + 3); // Set expiry date to 3 days after creation date
       const timeDiff = expiryDate.getTime() - now.getTime();
@@ -81,14 +83,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      getUser();
+    if (user) {
+      fetchJobs();
     }
-  }, [id]);
-
-  useEffect(() => {
-    fetchJobs();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (jobs.length > 0) {
@@ -116,7 +114,7 @@ const Dashboard = () => {
             <div className="font-inter text-center dark:text-white text-2xl">No Jobs To Display</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-              {jobs.map((job: any) => (
+              {jobs.map((job: Job) => (
                 <Job
                   key={job._id}
                   jobIcon={job.icon}

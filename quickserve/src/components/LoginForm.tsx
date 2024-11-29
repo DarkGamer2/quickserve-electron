@@ -1,12 +1,12 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import {AuthContext} from "../context/auth/Auth";
+import { AuthContext } from "../context/auth/Auth";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
-
+import { useTheme } from "../context/theme/Theme";
 const LoginForm = () => {
   const navigate = useNavigate();
-
+  const { theme } = useTheme();
   const [accountEmail, setAccountEmail] = useState<string>("");
   const [accountPassword, setAccountPassword] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -20,6 +20,14 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate email and password
+    if (!accountEmail || !accountPassword) {
+      setModalMessage("Please enter both email and password.");
+      setModalVisible(true);
+      return;
+    }
+
     try {
       await login(accountEmail, accountPassword);
       setModalMessage("Login successful!");
@@ -57,14 +65,14 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
+    <div className={`${theme==="dark"?"dark":"light"}`}>
       <h1 className="font-bebasneue text-center text-2xl">Login</h1>
       <div id="login-form" className="flex justify-center">
         <form onSubmit={handleSubmit}>
           <div>
             <label className="block text-center dark:text-white">Email</label>
             <input
-              className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+              className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-600 dark:text-white"
               type="text"
               value={accountEmail}
               onChange={(e) => setAccountEmail(e.target.value)}
@@ -73,7 +81,7 @@ const LoginForm = () => {
           <div>
             <label className="block text-center dark:text-white">Password</label>
             <input
-              className="rounded-md bg-slate-300 font-outfit py-2 my-1"
+              className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-600 dark:text-white"
               type="password"
               value={accountPassword}
               onChange={(e) => setAccountPassword(e.target.value)}
@@ -82,7 +90,7 @@ const LoginForm = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="rounded-md bg-orange-400 text-white uppercase py-3 px-2 my-2"
+              className="rounded-md bg-orange-400 text-white uppercase py-3 px-2 my-2 w-full"
             >
               Login
             </button>
@@ -91,7 +99,7 @@ const LoginForm = () => {
             <Link to="/register">
               <button
                 type="button"
-                className="rounded-md bg-green-400 text-white uppercase py-3 px-2 my-2"
+                className="rounded-md bg-green-400 text-white uppercase py-3 px-2 my-2 w-full"
               >
                 Register
               </button>

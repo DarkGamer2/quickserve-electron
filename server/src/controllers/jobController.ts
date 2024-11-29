@@ -37,6 +37,7 @@ class JobController {
                     productSerialNumber: req.body.productInformation.productSerialNumber,
                 },
                 successMessage: req.body.successMessage,
+                userId: req.body.userId, // Add userId to the job
             });
             await newJob.save();
             res.status(201).json(newJob);
@@ -45,18 +46,28 @@ class JobController {
         }
     }
 
-public async updateJobStatus(req: Request, res: Response) {
-    try {
-        const job = await Job.findById(req.params.id);
-        if (!job) {
-            return res.status(404).json({ message: "Job not found" });
+    public async updateJobStatus(req: Request, res: Response) {
+        try {
+            const job = await Job.findById(req.params.id);
+            if (!job) {
+                return res.status(404).json({ message: "Job not found" });
+            }
+            job.jobStatus = req.body.jobStatus;
+            await job.save();
+            res.json(job);
+        } catch (error: any) {
+            res.status(400).json({ message: error.message });
         }
-        job.jobStatus = req.body.jobStatus;
-        await job.save();
-        res.json(job);
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    }
+
+    public async getJobsByUser(req: Request, res: Response) {
+        try {
+            const jobs = await Job.find({ userId: req.params.userId });
+            res.json(jobs);
+        } catch (error: any) {
+            res.status(500).json({ message: error.message });
+        }
     }
 }
-}
+
 export default new JobController();

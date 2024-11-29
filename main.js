@@ -15,8 +15,10 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.loadURL('http://localhost:3000'); // Adjust the URL to your React app
+  mainWindow.loadURL('http://localhost:1420'); // Adjust the URL to your React app
 };
+
+app.setName('QuickServe');
 
 app.on('ready', createWindow);
 

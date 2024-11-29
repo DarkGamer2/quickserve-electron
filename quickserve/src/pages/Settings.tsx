@@ -1,7 +1,7 @@
 import SideNav from "../components/SideNav";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
 import Modal from "../components/Modal";
@@ -18,6 +18,7 @@ const Settings = () => {
   const [modalColor, setModalColor] = useState('');
   const { id } = useParams<{ id: string }>();
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const showMessageModal = (message: string, color: string) => {
     setModalType('message');
@@ -50,9 +51,8 @@ const Settings = () => {
 
   const handleLogout = () => {
     logout();
+    navigate("/"); // Redirect to login page after logout
   };
-
-
 
   // Provide a fallback if id is undefined
   const userId = id || ""; // Set default to empty string or handle differently
