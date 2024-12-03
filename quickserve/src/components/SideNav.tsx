@@ -7,11 +7,12 @@ import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
 
 interface SideNavProps {
-  userId: string;  // User ID passed as a prop
+  profilePic: string; // Profile picture URL
+  userId: string;     // User ID passed as a prop
 }
 
-const SideNav: React.FC<SideNavProps> = ({ userId }) => {
-  const { theme } = useTheme();
+const SideNav: React.FC<SideNavProps> = ({ profilePic, userId }) => {
+  const { theme } = useTheme();  // Custom theme context
 
   return (
     <div className={`${theme === "dark" ? "dark" : "light"}`}>
@@ -33,11 +34,18 @@ const SideNav: React.FC<SideNavProps> = ({ userId }) => {
             </li>
           </NavLink>
           {/* Updated Settings link with dynamic userId */}
-          <NavLink to={`/settings/${userId}`}>
+          <NavLink to={`/settings`}>
             <li className="text-orange-800 py-6">
               <SettingsIcon fontSize="large" />
             </li>
           </NavLink>
+          <li>
+            <img 
+              src={profilePic} 
+              alt="Profile" 
+              className="w-10 h-10 rounded-full mx-2 my-4" 
+            />
+          </li>
         </nav>
       </div>
     </div>

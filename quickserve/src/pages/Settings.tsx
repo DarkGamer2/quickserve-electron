@@ -6,8 +6,8 @@ import { useTheme } from "../context/theme/Theme";
 import { useFontSize } from "../context/font/Font";
 import Modal from "../components/Modal";
 import { useState } from "react";
-import { useAuth } from "../context/auth/Auth";
-
+import axios from "axios";
+import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
   const { fontSize, setFontSize } = useFontSize();
@@ -17,7 +17,6 @@ const Settings = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalColor, setModalColor] = useState('');
   const { id } = useParams<{ id: string }>();
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const showMessageModal = (message: string, color: string) => {
@@ -34,7 +33,8 @@ const Settings = () => {
     showMessageModal('Font size updated successfully', 'bg-green-500');
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setModalType('admin');
     setShowModal(true);
   };
@@ -43,24 +43,35 @@ const Settings = () => {
     setShowModal(false);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = (newStatus: string) => {
+    console.log(newStatus);
     // Handle the admin password verification and account deletion logic here
     console.log("Admin Password:", adminPassword);
     setShowModal(false);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/"); // Redirect to login page after logout
+  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/logout");
+      if (response.status === 200) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+      showMessageModal("Error logging out", "bg-red-500");
+    }
   };
 
   // Provide a fallback if id is undefined
-  const userId = id || ""; // Set default to empty string or handle differently
+
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       {/* Pass userId (fallback in case id is undefined) to SideNav */}
-      <SideNav userId={userId} />
+      <SideNav userId={`${id}`} profilePic={ PlaceholderProfilePic} />
       
       <div className="flex-1 flex flex-col items-center justify-center p-4 dark:bg-black bg-gray-100">
         <h1 className="text-center font-bebasneue text-4xl mb-8 dark:text-white">Settings</h1>
@@ -79,7 +90,7 @@ const Settings = () => {
           <p className="mx-1 dark:text-white">Font Size</p>
           <select
             value={parseInt(fontSize)}
-            onChange={(e) => handleFontSizeChange(e)}
+            onChange={handleFontSizeChange}
             className="rounded-md bg-slate-300 font-outfit py-2 my-1 text-center"
           >
             <option value="10">10</option>
@@ -90,7 +101,7 @@ const Settings = () => {
           </select>
         </div>
         <div className="text-center mb-4">
-          <Link to={`/profile/${userId}`}>
+          <Link to={`/profile`}>
             <button className="rounded-md py-2 px-3 text-white bg-orange-500">View Profile</button>
           </Link>
         </div>
@@ -115,7 +126,19 @@ const Settings = () => {
         show={showModal}
         type={modalType}
         onSubmit={handleConfirmDelete}
-      />
+      >
+        {modalType === 'admin' && (
+          <div className="flex flex-col items-center">
+            <label className="dark:text-white mb-2">Admin Password</label>
+            <input
+              type="password"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              className="rounded-md bg-slate-300 font-outfit py-2 my-1 dark:bg-slate-500 w-full dark:text-white"
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

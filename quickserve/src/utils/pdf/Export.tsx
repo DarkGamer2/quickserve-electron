@@ -8,8 +8,13 @@ interface ExportPDFProps {
 }
 
 const ExportPDF: React.FC<ExportPDFProps> = ({ isModalVisible, handleCancel }) => {
+  const [exporting, setExporting] = useState(false);
+  const [location, setLocation] = useState('');
+
   const handleOk = () => {
+    setExporting(true);
     exportPDF();
+    setExporting(false);
     handleCancel();
   };
 
@@ -23,6 +28,7 @@ const ExportPDF: React.FC<ExportPDFProps> = ({ isModalVisible, handleCancel }) =
     // Logic to open file explorer and select location
     // This is a placeholder as opening file explorer is not directly supported in browsers
     alert('Browse location clicked');
+    setLocation('Selected location path'); // Update the location state
   };
 
   return (
@@ -34,12 +40,17 @@ const ExportPDF: React.FC<ExportPDFProps> = ({ isModalVisible, handleCancel }) =
       type="admin"
     >
       <div className="flex flex-col items-center">
-        <button className="bg-green-500 text-white px-4 py-2 rounded mb-4" onClick={handleOk}>
-          Export
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+          onClick={handleOk}
+          disabled={exporting}
+        >
+          {exporting ? 'Exporting...' : 'Export'}
         </button>
         <button className="bg-gray-500 text-white px-4 py-2 rounded" onClick={browseLocation}>
           Browse Location
         </button>
+        {location && <p className="mt-2 text-white">Location: {location}</p>}
       </div>
     </Modal>
   );

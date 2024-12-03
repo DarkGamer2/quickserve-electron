@@ -25,7 +25,7 @@ const ReportPDF = (props: PDFProps) => {
         theme === "dark" ? "dark" : "light"
       }`}
     >
-      <SideNav />
+      <SideNav userId="userId"/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">
           Report PDF
@@ -51,7 +51,7 @@ const ReportPDF = (props: PDFProps) => {
             <tbody>
               <tr>
                 <td className="font-bold dark:text-white">Name:</td>
-                <td className="dark:text-white">John Doe</td>
+                <td className="dark:text-white">{props.name}</td>
               </tr>
               <tr>
                 <td className="font-bold dark:text-white">Job Type:</td>

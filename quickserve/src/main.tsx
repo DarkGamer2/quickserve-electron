@@ -5,7 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Details from "./pages/Details";
 import Reports from "./pages/Reports";
-import Settings from "./pages/Settings";  // Settings page import
+import Settings from "./pages/Settings"; // Settings page import
 import AddJob from "./pages/AddJob";
 import Profile from "./pages/Profile";
 import GenerateReport from "./pages/GenerateReport";
@@ -13,12 +13,9 @@ import { Provider } from "react-redux";
 import store from "./store/index";
 import { ThemeProvider } from "./context/theme/Theme";
 import { FontSizeProvider } from "./context/font/Font";
-import { AuthProvider } from "./context/auth/Auth";
-import PrivateRoute from "./components/PrivateRoute";
 import Error from "./pages/Error";
 import EditProfile from "./pages/EditProfile";
 import ReportDetails from "./pages/ReportDetails";
-import ReportPDF from "./components/ReportPDF";
 
 // Create the router with correct paths
 const router = createBrowserRouter(
@@ -35,11 +32,7 @@ const router = createBrowserRouter(
     },
     {
       path: "/dashboard",
-      element: (
-        <PrivateRoute>
-          <Dashboard />
-        </PrivateRoute>
-      ),
+      element: <Dashboard />,
       errorElement: <Error />,
     },
     {
@@ -54,7 +47,7 @@ const router = createBrowserRouter(
     },
     // Corrected path for Settings page
     {
-      path: "/settings/:id",
+      path: "/settings",
       element: <Settings />,
       errorElement: <Error />,
     },
@@ -64,11 +57,11 @@ const router = createBrowserRouter(
       errorElement: <Error />,
     },
     {
-      path: "/profile/:id",    // Correct path for profile page
+      path: "/profile", // Correct path for profile page
       element: (
-        <PrivateRoute>
+       
           <Profile />
-        </PrivateRoute>
+        
       ),
       errorElement: <Error />,
     },
@@ -106,12 +99,10 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <ThemeProvider>
-    <AuthProvider>
-      <FontSizeProvider>
-        <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider>
-      </FontSizeProvider>
-    </AuthProvider>
+    <FontSizeProvider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </FontSizeProvider>
   </ThemeProvider>
 );

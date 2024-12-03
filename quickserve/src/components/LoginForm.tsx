@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/auth/Auth";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/theme/Theme";
+import axios from "axios";
 const LoginForm = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -12,52 +12,25 @@ const LoginForm = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
 
-  const authContext = useContext(AuthContext);
-  if (!authContext) {
-    throw new Error("AuthContext must be used within an AuthProvider");
-  }
-  const { login } = authContext;
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate email and password
-    if (!accountEmail || !accountPassword) {
-      setModalMessage("Please enter both email and password.");
-      setModalVisible(true);
-      return;
-    }
-
-    try {
-      await login(accountEmail, accountPassword);
-      setModalMessage("Login successful!");
-      setModalVisible(true);
-
-      // Navigate to another page on successful login
-      navigate("/dashboard");
-    } catch (error: any) {
-      console.error("Error logging in:", error);
-      let errorMessage = "An error occurred. Please try again later.";
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        if (error.response.status === 500) {
-          errorMessage = "Internal server error. Please try again later.";
-        } else if (error.response.status === 401) {
-          errorMessage = "Invalid email or password.";
-        } else {
-          errorMessage = error.response.data.message || errorMessage;
-        }
-      } else if (error.request) {
-        // The request was made but no response was received
-        errorMessage = "No response from server. Please check your network connection.";
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        errorMessage = error.message;
+    await axios.post("http://localhost:3000/api/auth/login", {
+      email: accountEmail,
+      password: accountPassword,
+    }).then((response) => {
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", accountEmail);
+        navigate("/dashboard");
       }
-      setModalMessage(errorMessage);
+    }).catch((error) => {
+      console.log(error);
+      setModalMessage("Invalid email or password");
       setModalVisible(true);
-    }
+    });
+   
   };
 
   const closeModal = () => {

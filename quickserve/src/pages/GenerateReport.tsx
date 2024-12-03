@@ -81,7 +81,7 @@ useEffect(() => {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav />
+      <SideNav userId="userId"/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">Generate Report</h1>
         <div className="flex flex-col items-center justify-center mt-8">
