@@ -11,7 +11,7 @@ interface SideNavProps {
   userId: string;     // User ID passed as a prop
 }
 
-const SideNav: React.FC<SideNavProps> = ({ profilePic, userId }) => {
+const SideNav: React.FC<SideNavProps> = ({ profilePic }) => {
   const { theme } = useTheme();  // Custom theme context
 
   return (

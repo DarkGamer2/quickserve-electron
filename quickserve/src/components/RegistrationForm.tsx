@@ -1,7 +1,7 @@
-import { useState, useContext } from "react";
+import { useState} from "react";
 import { useNavigate } from "react-router-dom"; 
 import Modal from "./Modal";
-
+import axios from "axios";
 const RegisterForm = () => {
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -12,32 +12,27 @@ const RegisterForm = () => {
   const [modalMessage, setModalMessage] = useState<string>("");
 
   const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
-  if (!authContext) {
-    throw new Error("AuthContext is not provided");
-  }
-  const { register } = authContext;
+ 
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setModalMessage("Passwords do not match");
+   await axios.post("http://localhost:3000/api/auth/register", {
+      fullName: fullName,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+      skillset: skillset,
+    }).then((response) => {
+      if (response.status === 200) {
+        setModalMessage("Registration successful");
+        setModalVisible(true);
+      }
+    }).catch((error) => {
+      console.log(error);
+      setModalMessage("Registration failed");
       setModalVisible(true);
-      return;
-    }
-
-    try {
-      await register(email, password, fullName, skillset);
-      setModalMessage("Registration successful!");
-      setModalVisible(true);
-
-      // Navigate to another page on successful registration
-      navigate("/login");
-    } catch (error: any) {
-      console.error("Error registering:", error);
-      setModalMessage(error.message || "An error occurred");
-      setModalVisible(true);
-    }
+   })
   };
 
   const closeModal = () => {

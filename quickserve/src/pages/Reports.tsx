@@ -7,7 +7,7 @@ import { useTheme } from "../context/theme/Theme";
 import LoopIcon from '@mui/icons-material/Loop';
 import ReportThumbnail from "../assets/images/PHOTO-2024-10-12-19-42-55.jpg"; // Placeholder image
 import { useParams } from "react-router-dom";
-
+import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 const Reports = () => {
   interface ReportType {
     _id: string; // Use _id for consistency with MongoDB ObjectId
@@ -54,7 +54,7 @@ const Reports = () => {
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       {/* Pass userId to SideNav */}
-      <SideNav userId={`${id}`} />
+      <SideNav userId={`${id}`} profilePic={PlaceholderProfilePic}/>
       
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">Reports</h1>

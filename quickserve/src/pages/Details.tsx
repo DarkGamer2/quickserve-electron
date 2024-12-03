@@ -9,7 +9,7 @@ import Networking from "../assets/images/networking.jpg";
 import LoopIcon from '@mui/icons-material/Loop';
 import { useTheme } from "../context/theme/Theme";
 import Modal from "../components/Modal";
-
+import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 //TODO - add API endpoint to change job status
 const jobTypeImages: { [key: string]: string } = {
   "PC Repairs": PCRepairImage,
@@ -79,7 +79,7 @@ const Details = () => {
   if (loading) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen">
-        <SideNav userId="randomId" />
+        <SideNav userId="randomId" profilePic={PlaceholderProfilePic}/>
         <div className="flex-1 flex items-center justify-center text-orange-500 font-inter">
           <LoopIcon className="animate-spin mr-2" />
           <span>Loading...</span>
@@ -91,7 +91,7 @@ const Details = () => {
   if (!job) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen">
-        <SideNav userId="randomId" />
+        <SideNav userId="randomId" profilePic={PlaceholderProfilePic}/>
         <div className="flex-1 flex items-center justify-center text-red-500 font-inter">
           <span>Job Not Found</span>
         </div>
@@ -103,7 +103,7 @@ const Details = () => {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav userId="randomId" />
+      <SideNav userId="randomId" profilePic={PlaceholderProfilePic}/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">Job Details</h1>
         <div className="flex flex-col md:flex-row mt-4 space-y-4 md:space-y-0 md:space-x-4">

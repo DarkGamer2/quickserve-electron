@@ -23,15 +23,10 @@ const AddJobForm = () => {
 
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!user) {
-      setModalMessage('User not authenticated.');
-      setModalColor('bg-red-500');
-      setShowModal(true);
-      return;
-    }
+
 
     const jobIcon = jobTypeIcons[formState.jobType] || '';
-    const formData = { ...formState, jobIcon, userId: user._id }; // Add userId to formData
+    const formData = { ...formState, jobIcon}; // Add userId to formData
     try {
       const result = await dispatch(addJob(formData)).unwrap();
       console.log('Result:', result); // Log the result

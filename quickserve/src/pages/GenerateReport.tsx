@@ -3,7 +3,7 @@ import { useTheme } from "../context/theme/Theme";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "../components/Modal";
-
+import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";  
 //TODO - Finish the GenerateReport component
 //TODO - Add the ability to generate reports manually or automatically
 //TODO - Add the ability to select the data to generate
@@ -81,7 +81,7 @@ useEffect(() => {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav userId="userId"/>
+      <SideNav userId="userId" profilePic={PlaceholderProfilePic}/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">Generate Report</h1>
         <div className="flex flex-col items-center justify-center mt-8">

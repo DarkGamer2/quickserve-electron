@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import {useEffect} from 'react';
+import PlaceholderProfilePic from '../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg';
 const EditProfile = () => {
   const { theme } = useTheme();
   const [fullName, setFullName] = useState('');
@@ -29,7 +30,7 @@ const EditProfile = () => {
   },[])
   return (
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav userId='userId'/>
+      <SideNav userId='userId' profilePic={PlaceholderProfilePic}/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">Edit Profile</h1>
         <div className="flex flex-col items-center justify-center mt-8">

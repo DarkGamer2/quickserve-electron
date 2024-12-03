@@ -2,7 +2,7 @@ import SideNav from "./SideNav";
 import { useTheme } from "../context/theme/Theme";
 import ExportPDF from "../utils/pdf/Export";
 import { useState } from "react";
-
+import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 interface PDFProps {
   name: string;
   jobType: string;
@@ -25,7 +25,7 @@ const ReportPDF = (props: PDFProps) => {
         theme === "dark" ? "dark" : "light"
       }`}
     >
-      <SideNav userId="userId"/>
+      <SideNav userId="userId" profilePic={PlaceholderProfilePic}/>
       <div className="flex-1 p-4 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">
           Report PDF
