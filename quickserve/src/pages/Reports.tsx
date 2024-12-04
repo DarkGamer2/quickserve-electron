@@ -52,44 +52,46 @@ const Reports = () => {
   }, []);
 
   return (
-    <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      {/* Pass userId to SideNav */}
-      <SideNav userId={`${id}`} profilePic={PlaceholderProfilePic}/>
+    <div className={`flex min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
+    {/* Sidebar with fixed width */}
+    <SideNav userId={`${id}`} profilePic={PlaceholderProfilePic} />
+    
+    {/* Main content with margin to avoid overlap */}
+    <div className="flex-1 p-6 ml-16 dark:bg-black bg-gray-100">
+      <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">Reports</h1>
       
-      <div className="flex-1 p-4 dark:bg-black bg-gray-100">
-        <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">Reports</h1>
-        
-        {loading ? (
-          <div className="flex items-center justify-center text-orange-500 font-inter">
-            <LoopIcon className="animate-spin mr-2" />
-            <span>Loading...</span>
-          </div>
-        ) : reports.length === 0 ? (
-          <div className="font-inter text-center dark:text-white text-2xl">No Reports To Display</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {reports.map((report: ReportType) => (
-              <Link to={`/reportDetails/${report._id}`} key={report._id}>
-                <Report
-                  reportThumbnail={ReportThumbnail} // Placeholder image or thumbnail
-                  reportTitle={report.reportName}
-                  reportType={report.reportType}
-                  reportDate={new Date(report.generationDate).toLocaleDateString()} // Format date as needed
-                />
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <div className="text-center mt-8">
-          <Link to="/generateReport">
-            <button className="rounded-md py-2 px-3 bg-green-600 text-white font-inter">
-              Generate Report
-            </button>
-          </Link>
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <LoopIcon className="animate-spin text-orange-500 text-4xl" />
         </div>
+      ) : reports.length === 0 ? (
+        <div className="font-inter text-center dark:text-white text-2xl mt-8">
+          No Reports To Display
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {reports.map((report: ReportType) => (
+            <Link to={`/reportDetails/${report._id}`} key={report._id}>
+              <Report
+                reportThumbnail={ReportThumbnail}
+                reportTitle={report.reportName}
+                reportType={report.reportType}
+                reportDate={new Date(report.generationDate).toLocaleDateString()}
+              />
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <div className="text-center mt-8">
+        <Link to="/generateReport">
+          <button className="rounded-md py-2 px-6 bg-green-600 hover:bg-green-700 transition duration-300 text-white font-semibold">
+            Generate Report
+          </button>
+        </Link>
       </div>
     </div>
+  </div>
   );
 };
 

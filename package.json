@@ -3,10 +3,18 @@
   "version": "1.0.0",
   "main": "main.js",
   "license": "MIT",
+  "description": "Service desk application",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
+  },
+  "author": "Kameer Hosein",
+  "build": {
+    "appId": "com.yourdomain.yourapp",
+    "win": {
+      "target": "squirrel"
+    }
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.0",

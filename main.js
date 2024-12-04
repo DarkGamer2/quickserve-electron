@@ -13,7 +13,10 @@ const createWindow = () => {
       enableRemoteModule: false,
       nodeIntegration: false,
     },
+    autoHideMenuBar: true, // Hide the menu bar by default
   });
+
+  mainWindow.setMenuBarVisibility(false); // Completely remove the menu bar
 
   mainWindow.loadURL('http://localhost:1420'); // Adjust the URL to your React app
 };

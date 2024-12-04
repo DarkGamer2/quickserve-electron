@@ -115,7 +115,7 @@ const Dashboard = () => {
     <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
       {/* Pass profilePic and userId to SideNav */}
       <SideNav userId={`${id}`} profilePic={profilePic || PlaceholderProfilePic} />
-      <div className="flex-1 p-4 dark:bg-black bg-gray-100">
+      <div className="flex-1 p-4 ml-20 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-3xl text-center dark:text-white">QuickServe</h1>
         <h3 className="font-inter text-center text-xl dark:text-white">
           Welcome <span className="text-orange-500">User</span>!

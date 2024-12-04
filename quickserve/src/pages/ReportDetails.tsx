@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import SideNav from "../components/SideNav";
 import { useTheme } from "../context/theme/Theme";
 import PlaceholderProfilePic from "../assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
+
 interface Report {
   _id: string;
   reportType: string;
@@ -52,20 +53,48 @@ const ReportDetails: React.FC = () => {
     }
   }, [reportId]);
 
-  if (loading) return <div>Loading report...</div>;
-  if (error) return <div>{error}</div>;
-  if (!report) return <div>Report not found</div>;
+  if (loading)
+    return (
+      <div className="flex min-h-screen">
+        <SideNav userId="userId" profilePic={PlaceholderProfilePic} />
+        <div className="flex-1 ml-16 flex items-center justify-center text-orange-500 font-inter">
+          Loading report...
+        </div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex min-h-screen">
+        <SideNav userId="userId" profilePic={PlaceholderProfilePic} />
+        <div className="flex-1 ml-16 flex items-center justify-center text-red-500 font-inter">
+          {error}
+        </div>
+      </div>
+    );
+
+  if (!report)
+    return (
+      <div className="flex min-h-screen">
+        <SideNav userId="userId" profilePic={PlaceholderProfilePic} />
+        <div className="flex-1 ml-16 flex items-center justify-center text-gray-500 font-inter">
+          Report not found
+        </div>
+      </div>
+    );
 
   return (
-    <div className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
-      <SideNav userId="userId" profilePic={PlaceholderProfilePic}/>
-      <div className="flex-1 p-4 dark:bg-black bg-gray-100">
+    <div className={`flex min-h-screen ${theme === "dark" ? "dark" : "light"}`}>
+      <SideNav userId="userId" profilePic={PlaceholderProfilePic} />
+      {/* Main content with margin to respect sidebar */}
+      <div className="flex-1 p-6 ml-16 dark:bg-black bg-gray-100">
         <h1 className="font-bebasneue text-4xl text-center dark:text-white mb-8">
           {report.reportType} Report Details
         </h1>
-        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
+
+        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
-            <div className="font-bold text-xl dark:text-white">Report Information</div>
+            <h2 className="font-bold text-xl dark:text-white">Report Information</h2>
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-300">
             <p><strong>Status:</strong> {report.status}</p>
@@ -76,9 +105,12 @@ const ReportDetails: React.FC = () => {
             <p><strong>Fields:</strong> {report.requestedInformation.fields.join(", ")}</p>
           </div>
         </section>
-        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
+
+        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <h3 className="font-bold text-xl dark:text-white mb-4">Generated Data</h3>
-          <pre className="text-sm text-gray-600 dark:text-gray-300">{JSON.stringify(report.generatedData, null, 2)}</pre>
+          <pre className="text-sm text-gray-600 dark:text-gray-300 overflow-auto">
+            {JSON.stringify(report.generatedData, null, 2)}
+          </pre>
         </section>
       </div>
     </div>
