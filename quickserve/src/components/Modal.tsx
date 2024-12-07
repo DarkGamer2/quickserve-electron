@@ -9,9 +9,10 @@ interface ModalProps {
   type: 'message' | 'admin' | 'status';
   children?: React.ReactNode; // Add children prop to allow additional content
   onSubmit?: (newStatus: string) => void; // Add onSubmit prop for form submission
+  variant?: 'success' | 'error'; // Add variant prop for success and error messages
 }
 
-const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type, children, onSubmit }) => {
+const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type, children, onSubmit, variant }) => {
   const [newStatus, setNewStatus] = useState<string>('');
 
   useEffect(() => {
@@ -31,10 +32,16 @@ const Modal: React.FC<ModalProps> = ({ color, message, onClose, show, type, chil
     onClose();
   };
 
+  const getVariantColor = () => {
+    if (variant === 'success') return 'bg-green-500';
+    if (variant === 'error') return 'bg-red-500';
+    return color;
+  };
+
   return (
     <div className={`fixed inset-0 flex items-center justify-center z-50 ${type === 'message' ? 'top-0' : ''}`}>
       {type === 'message' ? (
-        <div className={`fixed top-0 left-0 right-0 p-4 ${color} text-white text-center fade-out`}>
+        <div className={`fixed top-0 left-0 right-0 p-4 ${getVariantColor()} text-white text-center fade-out`}>
           {message}
         </div>
       ) : (

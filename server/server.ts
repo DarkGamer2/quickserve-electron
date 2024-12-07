@@ -15,16 +15,25 @@ app.use(session({
     resave:false,
     saveUninitialized:false
 }))
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 const corsOptions = {
-    origin: 'http://localhost:1420', // Replace with your frontend URL
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: 'http://localhost:1420', // Ensure this matches your frontend's URL
+    credentials: true,               // Allow cookies and authorization headers
   };
-app.use(cors(corsOptions));
+  
+  app.use(cors(corsOptions));
+
+  app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));        // CORS middleware
+app.use(express.json({ limit: '10mb' })); // Increase limit to 10MB or as needed
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
+app.use(session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: false,
+}));
+
 
 app.use("/api/auth",authRoutes);
 app.use('/api/jobs',jobRoutes);

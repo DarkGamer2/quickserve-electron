@@ -55,7 +55,7 @@ export const jobTypeIcons: { [key: string]: string } = {
 
 export const addJob = createAsyncThunk('form/addJob', async (formData: FormState, { rejectWithValue }) => {
   try {
-    const response = await axios.post('https://quickserve-api-production.up.railway.app/api/jobs/addjob', formData);
+    const response = await axios.post('http://localhost:1420/api/jobs/addjob', formData);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

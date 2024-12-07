@@ -50,10 +50,10 @@ class UserController {
 
     // Register User
     public async register(req: Request, res: Response): Promise<Response> {
-        const { username, email, password, role, profilePic } = req.body;
+        const { fullName, email, password, role, profilePic,skillSet } = req.body;
 
         // Validate required fields
-        if (!username || !email || !password) {
+        if (!fullName || !email || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
@@ -80,7 +80,7 @@ class UserController {
 
             // Create a new user
             const newUser = new User({
-                username,
+               fullName,
                 email,
                 password: hashedPassword,
                 skillSet: [],
